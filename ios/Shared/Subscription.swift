@@ -29,11 +29,11 @@ enum SubscriptionError: LocalizedError {
         case .http(let code): return "HTTP \(code)"
         case .empty: return NSLocalizedString("В подписке нет серверов VLESS или Trojan", comment: "")
         case .deviceLimit(let announce):
-            let text = NSLocalizedString("В подписке достигнут лимит устройств. Удалите старое устройство в боте или на странице подписки", comment: "")
+            let text = NSLocalizedString("В подписке достигнут лимит устройств. Попросите администратора освободить место для этого устройства", comment: "")
             return announce.isEmpty ? text : "\(text). \(announce)"
         case .noDeviceID: return NSLocalizedString("Панель не получила идентификатор устройства", comment: "")
         case .notSubscription:
-            return NSLocalizedString("По ссылке открывается страница, а не подписка. Скопируйте ссылку подписки в боте ещё раз", comment: "")
+            return NSLocalizedString("По ссылке открывается страница, а не подписка. Попросите ссылку подписки ещё раз", comment: "")
         }
     }
 }

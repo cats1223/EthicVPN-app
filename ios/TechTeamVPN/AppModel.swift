@@ -182,7 +182,7 @@ final class AppModel: ObservableObject {
     func offerClipboard(force: Bool) async {
         let board = UIPasteboard.general
         guard board.hasStrings || board.hasURLs else {
-            if force { message = String(localized: "В буфере обмена нет ссылки. Скопируйте подписку в боте и откройте ссылку ещё раз.") }
+            if force { message = String(localized: "В буфере обмена нет ссылки. Скопируйте ссылку подписки и откройте приложение ещё раз.") }
             return
         }
         if !force {

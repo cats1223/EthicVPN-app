@@ -35,7 +35,7 @@
     <string name="no_servers">Серверов пока нет. Добавьте ключ или подписку.</string>
 
     <string name="msg_added">Добавлено серверов: %1$d</string>
-    <string name="msg_clipboard_empty">В буфере обмена нет ссылки. Скопируйте подписку в боте и откройте ссылку ещё раз.</string>
+    <string name="msg_clipboard_empty">В буфере обмена нет ссылки. Скопируйте ссылку подписки и откройте приложение ещё раз.</string>
     <string name="clipboard_offer_title">Добавить подписку?</string>
     <string name="clipboard_offer_text">В буфере обмена есть ссылка:\n%1$s\n\nДобавить её как подписку?</string>
     <string name="clipboard_offer_add">Добавить</string>
@@ -58,7 +58,7 @@
     <string name="expiry_channel">Подписка</string>
     <string name="expiry_in_3_days">Подписка закончится через 3 дня</string>
     <string name="expiry_tomorrow">Подписка закончится завтра</string>
-    <string name="expiry_text">Продлите её в боте, чтобы VPN не отключился.</string>
+    <string name="expiry_text">Попросите продлить её, чтобы VPN не отключился.</string>
     <string name="sites_direct">Всегда напрямую</string>
     <string name="sites_proxy">Всегда через VPN</string>
     <string name="sites_direct_hint">Эти сайты открываются без VPN, с вашего обычного адреса. Поддомены тоже.</string>
@@ -156,7 +156,7 @@
     <string name="onboarding_1_title">Добро пожаловать в TechTeamVPN</string>
     <string name="onboarding_1_text">Быстрый и защищённый доступ к интернету. Подключение — одним касанием.</string>
     <string name="onboarding_2_title">Добавьте подписку</string>
-    <string name="onboarding_2_text">Скопируйте ссылку подписки в боте @TechTeamVPN_bot и откройте приложение — оно предложит её добавить. Можно и вставить ключ или отсканировать QR-код.</string>
+    <string name="onboarding_2_text">Скопируйте ссылку подписки, которую вам прислали, и откройте приложение — оно само предложит её добавить. Можно и вставить ключ или отсканировать QR-код.</string>
     <string name="onboarding_3_title">Российские сайты — напрямую</string>
     <string name="onboarding_3_text">Банки, Госуслуги и другие российские сайты открываются без VPN, с вашего обычного адреса. Это и другое — в настройках.</string>
     <string name="onboarding_next">Далее</string>

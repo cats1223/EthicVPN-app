@@ -52,13 +52,13 @@ public static class Subscription
         if (header("x-hwid-max-devices-reached") == "true")
         {
             var announce = DecodeTitle(header("announce"));
-            throw new InvalidOperationException("В подписке достигнут лимит устройств. Удалите старое устройство в боте или на странице подписки"
+            throw new InvalidOperationException("В подписке достигнут лимит устройств. Попросите администратора освободить место для этого устройства"
                 + (announce.Length > 0 ? ". " + announce : ""));
         }
         if (header("x-hwid-not-supported") == "true") throw new InvalidOperationException("Панель не получила идентификатор устройства");
         if (status is < 200 or > 299) throw new InvalidOperationException($"HTTP {status}");
         if (body.TrimStart().StartsWith('<'))
-            throw new InvalidOperationException("По ссылке открывается страница, а не подписка. Скопируйте ссылку подписки в боте ещё раз");
+            throw new InvalidOperationException("По ссылке открывается страница, а не подписка. Попросите ссылку подписки ещё раз");
         var profiles = ParseLinks(body);
         if (profiles.Count == 0) throw new InvalidOperationException("В подписке нет серверов VLESS или Trojan");
         return profiles;

@@ -22,7 +22,7 @@ enum ExpiryReminders {
             for (id, before, title) in due {
                 let content = UNMutableNotificationContent()
                 content.title = title
-                content.body = String(localized: "Продлите её в боте, чтобы VPN не отключился.")
+                content.body = String(localized: "Попросите продлить её, чтобы VPN не отключился.")
                 content.sound = .default
                 let trigger = UNTimeIntervalNotificationTrigger(timeInterval: end.addingTimeInterval(-before).timeIntervalSinceNow, repeats: false)
                 center.add(UNNotificationRequest(identifier: id, content: content, trigger: trigger))

@@ -175,9 +175,6 @@ fun SettingsScreen(
                 Text("›", color = Brand.TextMuted, fontSize = 20.sp)
             }
         }
-        Card(Modifier.clickable { runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(SUPPORT_URL))) } }) {
-            Text(stringResource(R.string.support), color = Brand.Cyan)
-        }
         SectionTitle(stringResource(R.string.about))
         Card(
             Modifier.clickable {
@@ -432,7 +429,5 @@ private fun copy(context: Context, text: String) {
     (context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
         .setPrimaryClip(ClipData.newPlainText("TechTeamVPN", text))
 }
-
-const val SUPPORT_URL = "https://t.me/TechTeamVPN_bot"
 
 private fun toast(context: Context, text: String) = Toast.makeText(context, text, Toast.LENGTH_SHORT).show()

@@ -13,7 +13,6 @@ enum AppSettings {
     static let customDNSKey = "customDNS"
     /// Block all traffic while the VPN is down (iOS includeAllNetworks).
     static let killSwitchKey = "killSwitch"
-    static let supportURL = URL(string: "https://t.me/TechTeamVPN_bot")!
     /// Offer betas in the update check too, not only full releases.
     static let betaUpdatesKey = "betaUpdates"
 
@@ -127,10 +126,6 @@ struct SettingsView: View {
                 Section {
                     NavigationLink { AdvancedSettingsView() } label: { Label("Дополнительно", systemImage: "slider.horizontal.3") }
                         .listRowBackground(Brand.surface)
-                    Link(destination: AppSettings.supportURL) {
-                        Label("Поддержка в Telegram", systemImage: "paperplane")
-                    }
-                    .listRowBackground(Brand.surface)
                 }
 
                 Section("О приложении") {

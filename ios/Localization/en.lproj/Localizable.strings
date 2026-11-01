@@ -21,12 +21,12 @@
 "Включить или выключить VPN." = "Turn the VPN on or off.";
 "Подписка закончится через 3 дня" = "Your subscription ends in 3 days";
 "Подписка закончится завтра" = "Your subscription ends tomorrow";
-"Продлите её в боте, чтобы VPN не отключился." = "Renew it in the bot so the VPN keeps working.";
+"Попросите продлить её, чтобы VPN не отключился." = "Ask for it to be renewed so the VPN keeps working.";
 "Новых релизов нет. Чтобы получать беты, включите «Получать бета-версии»" = "No new releases. To get betas, turn on “Get beta versions”";
 "У вас последняя версия" = "You have the latest version";
 "Сначала добавьте сервер" = "Add a server first";
 "Не удалось распознать ключ" = "Could not recognize the key";
-"В буфере обмена нет ссылки. Скопируйте подписку в боте и откройте ссылку ещё раз." = "There is no link in the clipboard. Copy the subscription in the bot and open the link again.";
+"В буфере обмена нет ссылки. Скопируйте ссылку подписки и откройте приложение ещё раз." = "There is no link in the clipboard. Copy the subscription link and open the app again.";
 "В буфере обмена нет ссылки" = "There is no link in the clipboard";
 "Подписка обновлена" = "Subscription updated";
 "VPN не подключён — нажмите кнопку на главной" = "VPN is not connected — tap the button on the home screen";
@@ -172,7 +172,7 @@
 "Добро пожаловать в TechTeamVPN" = "Welcome to TechTeamVPN";
 "Быстрый и защищённый доступ к интернету. Подключение — одним касанием." = "Fast and secure internet access. Connect with one tap.";
 "Добавьте подписку" = "Add a subscription";
-"Скопируйте ссылку подписки в боте @TechTeamVPN_bot и откройте приложение — оно предложит её добавить. Можно и вставить ключ или отсканировать QR-код." = "Copy the subscription link in the @TechTeamVPN_bot bot and open the app, it will offer to add it. You can also paste a key or scan a QR code.";
+"Скопируйте ссылку подписки, которую вам прислали, и откройте приложение — оно само предложит её добавить. Можно и вставить ключ или отсканировать QR-код." = "Copy the subscription link you were sent and open the app, it will offer to add it. You can also paste a key or scan a QR code.";
 "Российские сайты — напрямую" = "Russian sites go direct";
 "Банки, Госуслуги и другие российские сайты открываются без VPN, с вашего обычного адреса. Это и другое — в настройках." = "Banks, Gosuslugi and other Russian sites open without the VPN, from your usual address. This and more is in settings.";
 "Далее" = "Next";
@@ -209,3 +209,6 @@
 "1. На Keenetic нужен USB-накопитель и Entware (компонент «OPKG»), на нём — XKeen: github.com/Skrill0/XKeen.\n2. Замените файлы в /opt/etc/xray/configs/ содержимым ниже.\n3. Перезапустите: xkeen -restart" = "1. The Keenetic needs a USB drive with Entware (the “OPKG” component) and XKeen on it: github.com/Skrill0/XKeen.\n2. Replace the files in /opt/etc/xray/configs/ with the text below.\n3. Restart: xkeen -restart";
 
 "Дополнительно" = "Advanced";
+"В подписке достигнут лимит устройств. Попросите администратора освободить место для этого устройства" = "The subscription has reached its device limit. Ask the administrator to free a place for this device";
+"По ссылке открывается страница, а не подписка. Попросите ссылку подписки ещё раз" = "The link opens a web page, not a subscription. Ask for the subscription link again";
+"Панель не получила идентификатор устройства" = "The panel did not get the device ID";

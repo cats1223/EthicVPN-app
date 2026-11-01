@@ -34,7 +34,7 @@
     <string name="no_servers">No servers yet. Add a key or a subscription.</string>
 
     <string name="msg_added">Servers added: %1$d</string>
-    <string name="msg_clipboard_empty">There is no link in the clipboard. Copy the subscription in the bot and open the link again.</string>
+    <string name="msg_clipboard_empty">There is no link in the clipboard. Copy the subscription link and open the app again.</string>
     <string name="clipboard_offer_title">Add subscription?</string>
     <string name="clipboard_offer_text">The clipboard has a link:\n%1$s\n\nAdd it as a subscription?</string>
     <string name="clipboard_offer_add">Add</string>
@@ -56,7 +56,7 @@
     <string name="expiry_channel">Subscription</string>
     <string name="expiry_in_3_days">Your subscription ends in 3 days</string>
     <string name="expiry_tomorrow">Your subscription ends tomorrow</string>
-    <string name="expiry_text">Renew it in the bot so the VPN keeps working.</string>
+    <string name="expiry_text">Ask for it to be renewed so the VPN keeps working.</string>
     <string name="sites_direct">Always direct</string>
     <string name="sites_proxy">Always via VPN</string>
     <string name="sites_direct_hint">These sites open without the VPN, from your usual address. Subdomains too.</string>
@@ -154,7 +154,7 @@
     <string name="onboarding_1_title">Welcome to TechTeamVPN</string>
     <string name="onboarding_1_text">Fast and secure internet access. Connect with one tap.</string>
     <string name="onboarding_2_title">Add a subscription</string>
-    <string name="onboarding_2_text">Copy the subscription link in the @TechTeamVPN_bot bot and open the app, it will offer to add it. You can also paste a key or scan a QR code.</string>
+    <string name="onboarding_2_text">Copy the subscription link you were sent and open the app, it will offer to add it. You can also paste a key or scan a QR code.</string>
     <string name="onboarding_3_title">Russian sites go direct</string>
     <string name="onboarding_3_text">Banks, Gosuslugi and other Russian sites open without the VPN, from your usual address. This and more is in settings.</string>
     <string name="onboarding_next">Next</string>

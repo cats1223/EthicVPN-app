@@ -217,8 +217,7 @@ function renderSettings() {
       toggle("autoReconnect", "Автопереподключение", "Если VPN оборвался, подключиться снова"),
       toggle("autostart", "Запускать вместе с Windows"),
       toggle("connectOnStart", "Подключаться при запуске"));
-    html.push(`<div class="section"></div>`, link("data-advanced", "Дополнительно<small>Защита, DNS, свои сайты, тест скорости, обновления</small>"),
-      link('data-url="https://t.me/TechTeamVPN_bot"', "Поддержка в Telegram"));
+    html.push(`<div class="section"></div>`, link("data-advanced", "Дополнительно<small>Защита, DNS, свои сайты, тест скорости, обновления</small>"));
     html.push(`<div class="section">О приложении</div>`,
       `<div class="setting"><div class="text">Версия</div><div class="muted">${esc(state.version || "")}</div></div>`,
       `<div class="setting" data-cmd="checkUpdate"><div class="text value">Проверить обновления</div></div>`);

@@ -59,14 +59,14 @@ object Subscription {
         if (header("x-hwid-max-devices-reached") == "true") {
             val announce = decodeTitle(header("announce"))
             throw IllegalStateException(
-                "В подписке достигнут лимит устройств. Удалите старое устройство в боте или на странице подписки" +
+                "В подписке достигнут лимит устройств. Попросите администратора освободить место для этого устройства" +
                     if (announce.isNotBlank()) ". $announce" else "",
             )
         }
         if (header("x-hwid-not-supported") == "true") throw IllegalStateException("Панель не получила идентификатор устройства")
         if (code !in 200..299) throw IllegalStateException("HTTP $code")
         if (body.trimStart().startsWith("<")) {
-            throw IllegalStateException("По ссылке открывается страница, а не подписка. Скопируйте ссылку подписки в боте ещё раз")
+            throw IllegalStateException("По ссылке открывается страница, а не подписка. Попросите ссылку подписки ещё раз")
         }
         return parseLinks(body).ifEmpty { throw IllegalStateException("В подписке нет серверов VLESS или Trojan") }
     }
