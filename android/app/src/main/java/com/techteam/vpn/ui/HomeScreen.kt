@@ -456,6 +456,8 @@ private fun SubscriptionCard(info: SubscriptionInfo) {
                     color = if (days <= 3) Brand.Amber else Brand.TextMuted, fontSize = 13.sp,
                 )
             }
+            // A message the panel sends to everyone (Remnawave "announce").
+            if (info.announce.isNotBlank()) Text("📣 " + info.announce, color = Brand.Cyan, fontSize = 13.sp)
         }
     }
 }

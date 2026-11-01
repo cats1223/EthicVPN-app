@@ -167,6 +167,8 @@ function renderSub() {
     parts.push(`<div class="muted">Трафик: ${formatBytes(used)} из ${formatBytes(info.total)}</div>`);
   } else if (used > 0) parts.push(`<div class="muted">Использовано: ${formatBytes(used)}</div>`);
   if (info.expire > 0) parts.push(`<div class="muted">Осталось дней: ${Math.max(0, Math.floor((info.expire * 1000 - Date.now()) / 86400000))}</div>`);
+  // A message the panel sends to everyone (Remnawave "announce").
+  if (info.announce) parts.push(`<div style="color:var(--accent)">📣 ${esc(info.announce)}</div>`);
   card.innerHTML = parts.join("");
 }
 

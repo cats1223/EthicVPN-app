@@ -12,16 +12,28 @@ struct SubscriptionInfo: Codable, Hashable {
     /// Unix seconds; 0 means no expiry.
     var expire: Int64 = 0
     var updatedAt: Int64 = 0
+    /// A message from the panel (Remnawave's `announce` header), shown on the subscription card.
+    /// Optional, so subscriptions saved by earlier versions still decode.
+    var announce: String?
 }
 
 enum SubscriptionError: LocalizedError {
     case http(Int)
     case empty
+    case deviceLimit(String)
+    case noDeviceID
+    case notSubscription
 
     var errorDescription: String? {
         switch self {
         case .http(let code): return "HTTP \(code)"
         case .empty: return NSLocalizedString("В подписке нет серверов VLESS или Trojan", comment: "")
+        case .deviceLimit(let announce):
+            let text = NSLocalizedString("В подписке достигнут лимит устройств. Удалите старое устройство в боте или на странице подписки", comment: "")
+            return announce.isEmpty ? text : "\(text). \(announce)"
+        case .noDeviceID: return NSLocalizedString("Панель не получила идентификатор устройства", comment: "")
+        case .notSubscription:
+            return NSLocalizedString("По ссылке открывается страница, а не подписка. Скопируйте ссылку подписки в боте ещё раз", comment: "")
         }
     }
 }
@@ -36,15 +48,27 @@ enum Subscription {
         for (name, value) in headers { request.setValue(value, forHTTPHeaderField: name) }
         let (data, response) = try await URLSession.shared.data(for: request)
         let http = response as? HTTPURLResponse
-        if let code = http?.statusCode, !(200..<300).contains(code) {
-            throw SubscriptionError.http(code)
-        }
-        let profiles = parseLinks(String(decoding: data, as: UTF8.self))
-        if profiles.isEmpty { throw SubscriptionError.empty }
+        let profiles = try check(status: http?.statusCode ?? 0, header: { http?.value(forHTTPHeaderField: $0) },
+                                 body: String(decoding: data, as: UTF8.self))
         var info = parseUserInfo(http?.value(forHTTPHeaderField: "subscription-userinfo"))
         info.title = decodeTitle(http?.value(forHTTPHeaderField: "profile-title"))
         info.updatedAt = Int64(Date().timeIntervalSince1970)
+        let announce = decodeTitle(http?.value(forHTTPHeaderField: "announce"))
+        info.announce = announce.isEmpty ? nil : announce
         return (profiles, info)
+    }
+
+    /// The servers in a panel's answer, or an error a person understands: Remnawave's device limit
+    /// (`x-hwid-max-devices-reached`, with its `announce` message), a missing device id, an HTTP
+    /// error, or a web page where the subscription should be.
+    static func check(status: Int, header: (String) -> String?, body: String) throws -> [ServerProfile] {
+        if header("x-hwid-max-devices-reached") == "true" { throw SubscriptionError.deviceLimit(decodeTitle(header("announce"))) }
+        if header("x-hwid-not-supported") == "true" { throw SubscriptionError.noDeviceID }
+        guard (200..<300).contains(status) else { throw SubscriptionError.http(status) }
+        if body.drop(while: \.isWhitespace).hasPrefix("<") { throw SubscriptionError.notSubscription }
+        let profiles = parseLinks(body)
+        if profiles.isEmpty { throw SubscriptionError.empty }
+        return profiles
     }
 
     /// Accepts plain text or base64 with one share link per line.
@@ -71,7 +95,7 @@ enum Subscription {
         return info
     }
 
-    private static func decodeTitle(_ header: String?) -> String {
+    static func decodeTitle(_ header: String?) -> String {
         guard let header, !header.isEmpty else { return "" }
         if header.hasPrefix("base64:") { return decodeBase64(String(header.dropFirst(7))) ?? "" }
         return header

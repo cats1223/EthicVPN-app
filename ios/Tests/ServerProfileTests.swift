@@ -143,6 +143,19 @@ final class ServerProfileTests: XCTestCase {
         XCTAssertTrue(rules.contains { $0["ip"] as? [String] == ["geoip:ru"] })
     }
 
+    func testExplainsRemnawaveAnswers() throws {
+        XCTAssertEqual(try Subscription.check(status: 200, header: { _ in nil }, body: reality).count, 1)
+        let announce = "base64:" + Data("Лимит: 3 устройства".utf8).base64EncodedString()
+        let headers = ["x-hwid-max-devices-reached": "true", "announce": announce]
+        XCTAssertThrowsError(try Subscription.check(status: 200, header: { headers[$0] }, body: "")) { error in
+            XCTAssertTrue((error as? LocalizedError)?.errorDescription?.hasSuffix("Лимит: 3 устройства") == true)
+        }
+        XCTAssertThrowsError(try Subscription.check(status: 200, header: { _ in nil }, body: "<!doctype html>")) { error in
+            guard case SubscriptionError.notSubscription = error else { return XCTFail("\(error)") }
+        }
+        XCTAssertThrowsError(try Subscription.check(status: 404, header: { _ in nil }, body: ""))
+    }
+
     func testBuildsTransports() throws {
         let xhttp = try XCTUnwrap(ServerProfile.parse(
             "vless://id@h:443?type=xhttp&path=%2Fx&mode=auto&extra=%7B%22xPaddingBytes%22%3A%22100-1000%22%7D"

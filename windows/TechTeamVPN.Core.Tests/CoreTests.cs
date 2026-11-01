@@ -149,6 +149,18 @@ public class CoreTests
     }
 
     [Fact]
+    public void ExplainsRemnawaveAnswers()
+    {
+        Assert.Single(Subscription.Check(200, _ => null, Reality));
+        var announce = "base64:" + Convert.ToBase64String(Encoding.UTF8.GetBytes("Лимит: 3 устройства"));
+        var headers = new Dictionary<string, string> { ["x-hwid-max-devices-reached"] = "true", ["announce"] = announce };
+        var e = Assert.Throws<InvalidOperationException>(() => Subscription.Check(200, n => headers.GetValueOrDefault(n), ""));
+        Assert.EndsWith("Лимит: 3 устройства", e.Message);
+        Assert.Contains("страница", Assert.Throws<InvalidOperationException>(() => Subscription.Check(200, _ => null, "<!doctype html>")).Message);
+        Assert.Equal("HTTP 404", Assert.Throws<InvalidOperationException>(() => Subscription.Check(404, _ => null, "")).Message);
+    }
+
+    [Fact]
     public void ComparesVersions()
     {
         Assert.True(Updates.IsNewer("1.2.0", "1.2.0-beta.1"));

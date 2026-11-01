@@ -159,6 +159,20 @@ class ServerProfileTest {
     }
 
     @Test
+    fun explainsRemnawaveAnswers() {
+        val ok = Subscription.check(200, { null }, reality)
+        assertEquals(1, ok.size)
+        val announce = "base64:" + Base64.getEncoder().encodeToString("Лимит: 3 устройства".toByteArray())
+        val limit = runCatching {
+            Subscription.check(200, { mapOf("x-hwid-max-devices-reached" to "true", "announce" to announce)[it] }, "")
+        }.exceptionOrNull()!!.message!!
+        assertTrue(limit.startsWith("В подписке достигнут лимит устройств"))
+        assertTrue(limit.endsWith("Лимит: 3 устройства"))
+        assertTrue(runCatching { Subscription.check(200, { null }, "<!doctype html><html>") }.exceptionOrNull()!!.message!!.contains("страница"))
+        assertEquals("HTTP 404", runCatching { Subscription.check(404, { null }, "") }.exceptionOrNull()!!.message)
+    }
+
+    @Test
     fun buildsTransports() {
         val ws = XrayConfig.outbound(ServerProfile.parse("vless://id@h:443?type=ws&security=tls&path=%2Fws&host=cdn.example&alpn=h2,http/1.1")!!)
             .getJSONObject("streamSettings")

@@ -13,6 +13,8 @@ data class SubscriptionInfo(
     /** Unix seconds; 0 means no expiry. */
     val expire: Long = 0,
     val updatedAt: Long = 0,
+    /** A message from the panel (Remnawave's `announce` header), shown on the subscription card. */
+    val announce: String = "",
 )
 
 data class SubscriptionResult(val profiles: List<ServerProfile>, val info: SubscriptionInfo)
@@ -34,19 +36,39 @@ object Subscription {
         }
         try {
             val code = conn.responseCode
-            if (code !in 200..299) throw IllegalStateException("HTTP $code")
-            val body = conn.inputStream.bufferedReader().use { it.readText() }
+            val body = (if (code in 200..299) conn.inputStream else conn.errorStream)?.bufferedReader()?.use { it.readText() }.orEmpty()
+            val profiles = check(code, conn::getHeaderField, body)
             val info = parseUserInfo(conn.getHeaderField("subscription-userinfo"))
                 .copy(
                     title = decodeTitle(conn.getHeaderField("profile-title")),
                     updatedAt = System.currentTimeMillis() / 1000,
+                    announce = decodeTitle(conn.getHeaderField("announce")),
                 )
-            val profiles = parseLinks(body)
-            if (profiles.isEmpty()) throw IllegalStateException("В подписке нет серверов VLESS или Trojan")
             return SubscriptionResult(profiles, info)
         } finally {
             conn.disconnect()
         }
+    }
+
+    /**
+     * The servers in a panel's answer, or an error a person understands: Remnawave's device limit
+     * (`x-hwid-max-devices-reached`, with its `announce` message), a missing device id, an HTTP
+     * error, or a web page where the subscription should be.
+     */
+    fun check(code: Int, header: (String) -> String?, body: String): List<ServerProfile> {
+        if (header("x-hwid-max-devices-reached") == "true") {
+            val announce = decodeTitle(header("announce"))
+            throw IllegalStateException(
+                "В подписке достигнут лимит устройств. Удалите старое устройство в боте или на странице подписки" +
+                    if (announce.isNotBlank()) ". $announce" else "",
+            )
+        }
+        if (header("x-hwid-not-supported") == "true") throw IllegalStateException("Панель не получила идентификатор устройства")
+        if (code !in 200..299) throw IllegalStateException("HTTP $code")
+        if (body.trimStart().startsWith("<")) {
+            throw IllegalStateException("По ссылке открывается страница, а не подписка. Скопируйте ссылку подписки в боте ещё раз")
+        }
+        return parseLinks(body).ifEmpty { throw IllegalStateException("В подписке нет серверов VLESS или Trojan") }
     }
 
     /** Accepts plain text or base64 with one share link per line. */
@@ -70,7 +92,7 @@ object Subscription {
         )
     }
 
-    private fun decodeTitle(header: String?): String {
+    fun decodeTitle(header: String?): String {
         if (header.isNullOrBlank()) return ""
         return if (header.startsWith("base64:")) decodeBase64(header.removePrefix("base64:")) ?: "" else header
     }

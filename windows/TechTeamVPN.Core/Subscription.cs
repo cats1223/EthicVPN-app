@@ -13,6 +13,8 @@ public sealed record SubscriptionInfo
     /// <summary>Unix seconds; 0 means no expiry.</summary>
     public long Expire { get; init; }
     public long UpdatedAt { get; init; }
+    /// <summary>A message from the panel (Remnawave's <c>announce</c> header), shown on the subscription card.</summary>
+    public string Announce { get; init; } = "";
 }
 
 public sealed record SubscriptionResult(List<ServerProfile> Profiles, SubscriptionInfo Info);
@@ -29,16 +31,37 @@ public static class Subscription
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
         foreach (var (name, value) in headers) request.Headers.TryAddWithoutValidation(name, value);
         using var response = await http.SendAsync(request);
-        if (!response.IsSuccessStatusCode) throw new InvalidOperationException($"HTTP {(int)response.StatusCode}");
         var body = await response.Content.ReadAsStringAsync();
+        var profiles = Check((int)response.StatusCode, name => Header(response, name), body);
         var info = ParseUserInfo(Header(response, "subscription-userinfo")) with
         {
             Title = DecodeTitle(Header(response, "profile-title")),
             UpdatedAt = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+            Announce = DecodeTitle(Header(response, "announce")),
         };
+        return new SubscriptionResult(profiles, info);
+    }
+
+    /// <summary>
+    /// The servers in a panel's answer, or an error a person understands: Remnawave's device limit
+    /// (<c>x-hwid-max-devices-reached</c>, with its <c>announce</c> message), a missing device id,
+    /// an HTTP error, or a web page where the subscription should be.
+    /// </summary>
+    public static List<ServerProfile> Check(int status, Func<string, string?> header, string body)
+    {
+        if (header("x-hwid-max-devices-reached") == "true")
+        {
+            var announce = DecodeTitle(header("announce"));
+            throw new InvalidOperationException("В подписке достигнут лимит устройств. Удалите старое устройство в боте или на странице подписки"
+                + (announce.Length > 0 ? ". " + announce : ""));
+        }
+        if (header("x-hwid-not-supported") == "true") throw new InvalidOperationException("Панель не получила идентификатор устройства");
+        if (status is < 200 or > 299) throw new InvalidOperationException($"HTTP {status}");
+        if (body.TrimStart().StartsWith('<'))
+            throw new InvalidOperationException("По ссылке открывается страница, а не подписка. Скопируйте ссылку подписки в боте ещё раз");
         var profiles = ParseLinks(body);
         if (profiles.Count == 0) throw new InvalidOperationException("В подписке нет серверов VLESS или Trojan");
-        return new SubscriptionResult(profiles, info);
+        return profiles;
     }
 
     private static string? Header(HttpResponseMessage r, string name) =>
@@ -68,7 +91,7 @@ public static class Subscription
         return new SubscriptionInfo { Upload = V("upload"), Download = V("download"), Total = V("total"), Expire = V("expire") };
     }
 
-    private static string DecodeTitle(string? header)
+    public static string DecodeTitle(string? header)
     {
         if (string.IsNullOrWhiteSpace(header)) return "";
         return header.StartsWith("base64:") ? DecodeBase64(header["base64:".Length..]) ?? "" : header;

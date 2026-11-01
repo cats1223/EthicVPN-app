@@ -411,6 +411,10 @@ private struct SubscriptionCard: View {
                     .font(.footnote)
                     .foregroundStyle(days <= 3 ? Brand.amber : .secondary)
             }
+            // A message the panel sends to everyone (Remnawave "announce").
+            if let announce = info.announce, !announce.isEmpty {
+                Label(announce, systemImage: "megaphone").font(.footnote).foregroundStyle(Brand.cyan)
+            }
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)

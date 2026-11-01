@@ -113,7 +113,7 @@ class ProfileRepository private constructor(private val context: Context) {
         }
         val info = s.subscriptionInfo?.let {
             JSONObject().put("title", it.title).put("upload", it.upload).put("download", it.download)
-                .put("total", it.total).put("expire", it.expire).put("updatedAt", it.updatedAt)
+                .put("total", it.total).put("expire", it.expire).put("updatedAt", it.updatedAt).put("announce", it.announce)
         }
         prefs.edit()
             .putString("profiles", arr.toString())
@@ -135,7 +135,7 @@ class ProfileRepository private constructor(private val context: Context) {
                 val o = JSONObject(it)
                 SubscriptionInfo(
                     o.optString("title"), o.optLong("upload"), o.optLong("download"),
-                    o.optLong("total"), o.optLong("expire"), o.optLong("updatedAt"),
+                    o.optLong("total"), o.optLong("expire"), o.optLong("updatedAt"), o.optString("announce"),
                 )
             }.getOrNull()
         }
