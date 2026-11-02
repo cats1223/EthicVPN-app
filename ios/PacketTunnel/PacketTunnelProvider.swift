@@ -212,7 +212,7 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
     }
 
     private func networkSettings(for profile: ServerProfile) -> NEPacketTunnelNetworkSettings {
-        let settings = NEPacketTunnelNetworkSettings(tunnelRemoteAddress: profile.address)
+        let settings = NEPacketTunnelNetworkSettings(tunnelRemoteAddress: Self.remoteIP(for: profile.address))
         settings.mtu = NSNumber(value: XrayConfig.tunMTU)
 
         let ipv4 = NEIPv4Settings(addresses: ["172.19.0.1"], subnetMasks: ["255.255.255.252"])
@@ -227,6 +227,33 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
         dns.matchDomains = [""]
         settings.dnsSettings = dns
         return settings
+    }
+
+    /// iOS rejects the tunnel settings when tunnelRemoteAddress is a host name ("Invalid
+    /// NETunnelNetworkSettings tunnelRemoteAddress"), and panels now put a domain in the link.
+    /// The field is informational (the extension's own sockets bypass the tunnel), so an IP
+    /// literal is passed through, a name is resolved, and a placeholder is used if that fails.
+    static func remoteIP(for host: String) -> String {
+        let bare = host.trimmingCharacters(in: CharacterSet(charactersIn: "[]"))
+        var v4 = in_addr(), v6 = in6_addr()
+        if inet_pton(AF_INET, bare, &v4) == 1 || inet_pton(AF_INET6, bare, &v6) == 1 { return bare }
+        var hints = addrinfo(ai_flags: 0, ai_family: AF_UNSPEC, ai_socktype: SOCK_STREAM,
+                             ai_protocol: 0, ai_addrlen: 0, ai_canonname: nil, ai_addr: nil, ai_next: nil)
+        var result: UnsafeMutablePointer<addrinfo>?
+        guard getaddrinfo(bare, nil, &hints, &result) == 0, let first = result else { return "127.0.0.1" }
+        defer { freeaddrinfo(result) }
+        var fallback: String?
+        var node: UnsafeMutablePointer<addrinfo>? = first
+        while let ai = node {
+            var buf = [CChar](repeating: 0, count: Int(NI_MAXHOST))
+            if getnameinfo(ai.pointee.ai_addr, ai.pointee.ai_addrlen, &buf, socklen_t(buf.count), nil, 0, NI_NUMERICHOST) == 0 {
+                let ip = String(cString: buf)
+                if ai.pointee.ai_family == AF_INET { return ip }
+                fallback = fallback ?? ip
+            }
+            node = ai.pointee.ai_next
+        }
+        return fallback ?? "127.0.0.1"
     }
 
     /// NetworkExtension does not expose the utun descriptor, so find the open socket whose
