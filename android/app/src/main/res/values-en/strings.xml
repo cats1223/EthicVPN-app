@@ -50,7 +50,7 @@
     <string name="rate">%1$s/s</string>
     <string name="whats_new_title">What\'s new in %1$s</string>
     <string name="whats_new_ok">Great</string>
-    <string name="widget_small_label">TechTeamVPN · button</string>
+    <string name="widget_small_label">EthicVPN · button</string>
     <string name="widget_wide_description">VPN status and switch</string>
     <string name="widget_small_description">Turn the VPN on or off with one tap</string>
     <string name="expiry_channel">Subscription</string>
@@ -68,14 +68,14 @@
     <string name="error_no_server">Add a server first</string>
     <string name="error_vpn_permission">VPN permission is required</string>
     <string name="vpn_denied_title">Android did not grant VPN permission</string>
-    <string name="vpn_denied_text">The permission dialog did not appear or was closed. Most often this happens when \"Always-on VPN\" is enabled — for another VPN client, Samsung \"Secure Wi-Fi\" or TechTeamVPN itself after a reinstall.\n\nOpen VPN settings, tap the gear next to that app, turn off \"Always-on VPN\" and connect again. You can turn it back on after granting permission.</string>
+    <string name="vpn_denied_text">The permission dialog did not appear or was closed. Most often this happens when \"Always-on VPN\" is enabled — for another VPN client, Samsung \"Secure Wi-Fi\" or EthicVPN itself after a reinstall.\n\nOpen VPN settings, tap the gear next to that app, turn off \"Always-on VPN\" and connect again. You can turn it back on after granting permission.</string>
     <string name="vpn_denied_settings">VPN settings</string>
 
     <string name="update_title">Update available</string>
     <string name="update_text">Version %1$s is out, you have %2$s. Update?</string>
     <string name="update_download">Update</string>
     <string name="update_downloading">Downloading: %1$d%%</string>
-    <string name="update_allow">Allow installs from TechTeamVPN, then tap \"Update\" again</string>
+    <string name="update_allow">Allow installs from EthicVPN, then tap \"Update\" again</string>
     <string name="update_later">Later</string>
     <string name="update_none">You have the latest version</string>
     <string name="update_none_beta">No new releases. To get betas, turn on \"Get beta versions\"</string>
@@ -135,7 +135,7 @@
     <string name="block_ads_hint">Ad and tracker domains don\'t load. If a site breaks, add it to \"Custom sites\"</string>
     <string name="kill_switch">Block internet without VPN</string>
     <string name="kill_switch_hint">While the VPN reconnects, the internet doesn\'t work, so nothing goes around it</string>
-    <string name="kill_switch_text">On Android this is a system setting: open VPN settings, tap the gear next to TechTeamVPN and turn on \"Always-on VPN\" and \"Block connections without VPN\".\n\nThen no app gets internet without a working VPN (except the ones chosen to bypass it).</string>
+    <string name="kill_switch_text">On Android this is a system setting: open VPN settings, tap the gear next to EthicVPN and turn on \"Always-on VPN\" and \"Block connections without VPN\".\n\nThen no app gets internet without a working VPN (except the ones chosen to bypass it).</string>
     <string name="dns_auto">Automatic</string>
     <string name="dns_auto_hint">Cloudflare and Google</string>
     <string name="dns_cloudflare_hint">1.1.1.1 — fast</string>
@@ -151,7 +151,7 @@
     <string name="stats_last_week">Last 7 days</string>
     <string name="stats_hint">All traffic through the VPN on this phone: ↓ downloaded, ↑ uploaded.</string>
     <string name="support">Support in Telegram</string>
-    <string name="onboarding_1_title">Welcome to TechTeamVPN</string>
+    <string name="onboarding_1_title">Welcome to EthicVPN</string>
     <string name="onboarding_1_text">Fast and secure internet access. Connect with one tap.</string>
     <string name="onboarding_2_title">Add a subscription</string>
     <string name="onboarding_2_text">Copy the subscription link you were sent and open the app, it will offer to add it. You can also paste a key or scan a QR code.</string>

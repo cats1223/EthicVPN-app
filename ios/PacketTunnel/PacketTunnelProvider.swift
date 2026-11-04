@@ -217,6 +217,9 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
 
         let ipv4 = NEIPv4Settings(addresses: ["172.19.0.1"], subnetMasks: ["255.255.255.252"])
         ipv4.includedRoutes = [NEIPv4Route.default()]
+        // The home network stays outside the tunnel: a PC, printer or console on Wi-Fi is reachable.
+        ipv4.excludedRoutes = [("10.0.0.0", "255.0.0.0"), ("169.254.0.0", "255.255.0.0"), ("192.168.0.0", "255.255.0.0")]
+            .map { NEIPv4Route(destinationAddress: $0.0, subnetMask: $0.1) }
         settings.ipv4Settings = ipv4
 
         let ipv6 = NEIPv6Settings(addresses: ["fdfe:dcba:9876::1"], networkPrefixLengths: [126])

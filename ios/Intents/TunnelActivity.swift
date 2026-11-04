@@ -38,7 +38,7 @@ enum TunnelActivity {
     @available(iOS 16.2, *)
     private static func apply(connected: Bool, since: Date?, serverName: String?) async {
         let running = Activity<TunnelActivityAttributes>.activities
-        let name = serverName ?? "TechTeamVPN"
+        let name = serverName ?? "EthicVPN"
         let wanted = connected && enabled && since != nil && ActivityAuthorizationInfo().areActivitiesEnabled
         // Exactly the one wanted is already showing: nothing to do.
         if wanted, running.count == 1, let current = running.first,

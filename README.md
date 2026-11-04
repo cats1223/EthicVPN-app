@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="branding/play-store-icon-512.png" width="128" alt="TechTeamVPN">
+<img src="branding/play-store-icon-512.png" width="128" alt="EthicVPN">
 
-# TechTeamVPN
+# EthicVPN
 
 **Быстрый и защищённый VPN для iPhone и Android**
 
@@ -39,13 +39,13 @@ VLESS · REALITY · XHTTP на ядре [Xray-core](https://github.com/XTLS/Xray
 
 | Платформа | Файл | Как установить |
 |---|---|---|
-| **Android 8+** | `TechTeamVPN-vX.Y.Z.apk` | Скачайте и откройте файл, разрешите установку из этого источника. |
-| **iPhone, iOS 16+** | `TechTeamVPN-vX.Y.Z-unsigned.ipa` | Подпишите своим сертификатом (ESign, Feather, Sideloadly и т. п.). В профиле должны быть **Network Extensions → Packet Tunnel**. |
+| **Android 8+** | `EthicVPN-vX.Y.Z.apk` | Скачайте и откройте файл, разрешите установку из этого источника. |
+| **iPhone, iOS 16+** | `EthicVPN-vX.Y.Z-unsigned.ipa` | Подпишите своим сертификатом (ESign, Feather, Sideloadly и т. п.). В профиле должны быть **Network Extensions → Packet Tunnel**. |
 
 ## Как добавить подписку
 
 1. В Telegram-боте сервиса скопируйте ссылку подписки.
-2. Откройте [cats1223.github.io/TechTeamVPN-app](https://cats1223.github.io/TechTeamVPN-app/) и нажмите **«Открыть TechTeamVPN»**.
+2. Откройте [cats1223.github.io/TechTeamVPN-app](https://cats1223.github.io/TechTeamVPN-app/) и нажмите **«Открыть EthicVPN»**.
 3. Приложение спросит **«Добавить подписку?»** — нажмите «Добавить». На iPhone разрешите вставку из буфера.
 
 Можно и вручную: **Серверы → «+»** → вставьте ссылку или отсканируйте QR-код.

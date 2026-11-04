@@ -109,7 +109,7 @@ fun SplashOverlay(onFinish: () -> Unit) {
                     },
             )
             Text(
-                "TechTeamVPN",
+                "EthicVPN",
                 color = Color.White, fontSize = 30.sp, fontWeight = FontWeight.Bold,
                 letterSpacing = (8 - 6.5f * title.value).sp,
                 modifier = Modifier.alpha(title.value.coerceIn(0f, 1f)).offset(y = (14 * (1 - title.value)).dp),

@@ -40,8 +40,8 @@ public partial class App : Application
         if (string.IsNullOrEmpty(webView))
         {
             var answer = MessageBox.Show(
-                "Для окна TechTeamVPN нужен компонент Microsoft Edge WebView2, а его нет на этом компьютере.\n\nОткрыть страницу загрузки? После установки запустите TechTeamVPN снова.",
-                "TechTeamVPN", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
+                "Для окна EthicVPN нужен компонент Microsoft Edge WebView2, а его нет на этом компьютере.\n\nОткрыть страницу загрузки? После установки запустите EthicVPN снова.",
+                "EthicVPN", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
             if (answer == MessageBoxResult.OK)
                 Process.Start(new ProcessStartInfo("https://go.microsoft.com/fwlink/p/?LinkId=2124703") { UseShellExecute = true });
             Shutdown();
@@ -83,7 +83,7 @@ public partial class App : Application
     private static void Report(Exception? e)
     {
         Log(e);
-        MessageBox.Show($"Ошибка TechTeamVPN:\n\n{e?.Message}\n\nПодробности: {CrashLog}", "TechTeamVPN",
+        MessageBox.Show($"Ошибка EthicVPN:\n\n{e?.Message}\n\nПодробности: {CrashLog}", "EthicVPN",
             MessageBoxButton.OK, MessageBoxImage.Error);
     }
 

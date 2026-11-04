@@ -16,6 +16,7 @@ import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import com.techteam.vpn.R
 import com.techteam.vpn.core.ServerProfile
+import com.techteam.vpn.core.LanRoutes
 import com.techteam.vpn.core.XrayConfig
 import com.techteam.vpn.core.XrayCore
 import com.techteam.vpn.data.AppSettings
@@ -190,10 +191,11 @@ class TechTeamVpnService : VpnService() {
             .setMtu(XrayConfig.TUN_MTU)
             .addAddress("172.19.0.1", 30)
             .addAddress("fdfe:dcba:9876::1", 126)
-            .addRoute("0.0.0.0", 0)
             .addRoute("::", 0)
             .setBlocking(false)
             .setConfigureIntent(mainActivityIntent())
+        // All of IPv4 except the home network, so a PC, printer or console on Wi-Fi stays reachable.
+        LanRoutes.routes().forEach { (address, prefix) -> builder.addRoute(address, prefix) }
         XrayConfig.DNS_SERVERS.forEach { builder.addDnsServer(it) }
         // Our own sockets (Xray's outbound connections) must bypass the tunnel.
         builder.addDisallowedApplication(packageName)

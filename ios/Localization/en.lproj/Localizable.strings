@@ -1,17 +1,17 @@
 /* English UI. Keys are the Russian source strings (developmentLanguage: ru). */
 
-"Включить или выключить TechTeamVPN" = "Turn TechTeamVPN on or off";
+"Включить или выключить EthicVPN" = "Turn EthicVPN on or off";
 "Подключает или отключает VPN." = "Connects or disconnects the VPN.";
 "Включён" = "On";
-"Включить TechTeamVPN" = "Turn on TechTeamVPN";
+"Включить EthicVPN" = "Turn on EthicVPN";
 "Подключает VPN к выбранному серверу." = "Connects the VPN to the selected server.";
-"TechTeamVPN подключается" = "TechTeamVPN is connecting";
-"Выключить TechTeamVPN" = "Turn off TechTeamVPN";
+"EthicVPN подключается" = "EthicVPN is connecting";
+"Выключить EthicVPN" = "Turn off EthicVPN";
 "Отключает VPN." = "Disconnects the VPN.";
-"TechTeamVPN отключён" = "TechTeamVPN is off";
+"EthicVPN отключён" = "EthicVPN is off";
 "Включить VPN" = "Turn on VPN";
 "Выключить VPN" = "Turn off VPN";
-"Сначала добавьте сервер в TechTeamVPN" = "Add a server in TechTeamVPN first";
+"Сначала добавьте сервер в EthicVPN" = "Add a server in EthicVPN first";
 "В подписке нет серверов VLESS или Trojan" = "The subscription has no VLESS or Trojan servers";
 "Включайте и выключайте VPN прямо с экрана «Домой»." = "Turn the VPN on and off right from the Home Screen.";
 "Подключено" = "Connected";
@@ -169,7 +169,7 @@
 "Последние 7 дней" = "Last 7 days";
 "Считается весь трафик через VPN на этом телефоне: ↓ загружено, ↑ отправлено." = "All traffic through the VPN on this phone: ↓ downloaded, ↑ uploaded.";
 "Статистика" = "Statistics";
-"Добро пожаловать в TechTeamVPN" = "Welcome to TechTeamVPN";
+"Добро пожаловать в EthicVPN" = "Welcome to EthicVPN";
 "Быстрый и защищённый доступ к интернету. Подключение — одним касанием." = "Fast and secure internet access. Connect with one tap.";
 "Добавьте подписку" = "Add a subscription";
 "Скопируйте ссылку подписки, которую вам прислали, и откройте приложение — оно само предложит её добавить. Можно и вставить ключ или отсканировать QR-код." = "Copy the subscription link you were sent and open the app, it will offer to add it. You can also paste a key or scan a QR code.";
@@ -180,7 +180,7 @@
 "Автопереподключение" = "Auto-reconnect";
 "Подключение" = "Connection";
 "Самый быстрый: перед подключением приложение проверит пинг всех серверов. Dynamic Island: таймер и сервер в «островке» и на экране блокировки, пока VPN включён. Автопереподключение: если VPN оборвался, iOS поднимет его сама — но тогда системная кнопка VPN в настройках и шторке не сможет его выключить; выключайте в приложении, виджетом или Siri." = "Fastest: before connecting, the app pings all servers. Dynamic Island: a timer and the server in the island and on the lock screen while the VPN is on. Auto-reconnect: if the VPN drops, iOS brings it back up — but then the system VPN switch in Settings and Control Center can't turn it off; turn it off in the app, with the widget or Siri.";
-"TechTeamVPN · Подключено" = "TechTeamVPN · Connected";
+"EthicVPN · Подключено" = "EthicVPN · Connected";
 "Тест скорости" = "Speed test";
 "Сервер теста скорости не отвечает" = "The speed test server doesn't respond";
 "Пинг" = "Ping";

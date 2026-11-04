@@ -427,7 +427,7 @@ private fun readLog(context: Context): String {
 
 private fun copy(context: Context, text: String) {
     (context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
-        .setPrimaryClip(ClipData.newPlainText("TechTeamVPN", text))
+        .setPrimaryClip(ClipData.newPlainText("EthicVPN", text))
 }
 
 private fun toast(context: Context, text: String) = Toast.makeText(context, text, Toast.LENGTH_SHORT).show()

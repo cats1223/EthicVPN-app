@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">TechTeamVPN</string>
+    <string name="app_name">EthicVPN</string>
     <string name="tagline">Быстрый и защищённый доступ</string>
 
     <string name="tab_home">Главная</string>
@@ -51,8 +51,8 @@
     <string name="rate">%1$s/с</string>
     <string name="whats_new_title">Что нового в %1$s</string>
     <string name="whats_new_ok">Отлично</string>
-    <string name="widget_wide_label">TechTeamVPN</string>
-    <string name="widget_small_label">TechTeamVPN · кнопка</string>
+    <string name="widget_wide_label">EthicVPN</string>
+    <string name="widget_small_label">EthicVPN · кнопка</string>
     <string name="widget_wide_description">Статус VPN и переключатель</string>
     <string name="widget_small_description">Включить или выключить VPN одним касанием</string>
     <string name="expiry_channel">Подписка</string>
@@ -70,14 +70,14 @@
     <string name="error_no_server">Сначала добавьте сервер</string>
     <string name="error_vpn_permission">Нужно разрешение на VPN</string>
     <string name="vpn_denied_title">Android не дал разрешение на VPN</string>
-    <string name="vpn_denied_text">Окно разрешения не появилось или было закрыто. Чаще всего так бывает, когда включена «Постоянная VPN» — у другого VPN-клиента, Samsung «Защищённый Wi-Fi» или у самого TechTeamVPN после переустановки.\n\nОткройте настройки VPN, нажмите на шестерёнку у этого приложения, выключите «Постоянная VPN» и подключитесь снова. После разрешения её можно включить обратно.</string>
+    <string name="vpn_denied_text">Окно разрешения не появилось или было закрыто. Чаще всего так бывает, когда включена «Постоянная VPN» — у другого VPN-клиента, Samsung «Защищённый Wi-Fi» или у самого EthicVPN после переустановки.\n\nОткройте настройки VPN, нажмите на шестерёнку у этого приложения, выключите «Постоянная VPN» и подключитесь снова. После разрешения её можно включить обратно.</string>
     <string name="vpn_denied_settings">Настройки VPN</string>
 
     <string name="update_title">Доступно обновление</string>
     <string name="update_text">Вышла версия %1$s, у вас %2$s. Обновить?</string>
     <string name="update_download">Обновить</string>
     <string name="update_downloading">Загрузка: %1$d%%</string>
-    <string name="update_allow">Разрешите установку из TechTeamVPN, затем нажмите «Обновить» ещё раз</string>
+    <string name="update_allow">Разрешите установку из EthicVPN, затем нажмите «Обновить» ещё раз</string>
     <string name="update_later">Позже</string>
     <string name="update_none">У вас последняя версия</string>
     <string name="update_none_beta">Новых релизов нет. Чтобы получать беты, включите «Получать бета-версии»</string>
@@ -137,7 +137,7 @@
     <string name="block_ads_hint">Рекламные и следящие домены не загружаются. Если сайт сломался — добавьте его в «Свои сайты»</string>
     <string name="kill_switch">Блокировать интернет без VPN</string>
     <string name="kill_switch_hint">Пока VPN переподключается, интернет не работает — ничего не уйдёт мимо него</string>
-    <string name="kill_switch_text">На Android это включается в системе: откройте настройки VPN, нажмите на шестерёнку у TechTeamVPN и включите «Постоянная VPN» и «Блокировать подключения без VPN».\n\nТогда без работающего VPN интернет не откроется ни в одном приложении (кроме выбранных «без VPN»).</string>
+    <string name="kill_switch_text">На Android это включается в системе: откройте настройки VPN, нажмите на шестерёнку у EthicVPN и включите «Постоянная VPN» и «Блокировать подключения без VPN».\n\nТогда без работающего VPN интернет не откроется ни в одном приложении (кроме выбранных «без VPN»).</string>
     <string name="dns_auto">Автоматически</string>
     <string name="dns_auto_hint">Cloudflare и Google</string>
     <string name="dns_cloudflare_hint">1.1.1.1 — быстрый</string>
@@ -153,7 +153,7 @@
     <string name="stats_last_week">Последние 7 дней</string>
     <string name="stats_hint">Считается весь трафик через VPN на этом телефоне: ↓ загружено, ↑ отправлено.</string>
     <string name="support">Поддержка в Telegram</string>
-    <string name="onboarding_1_title">Добро пожаловать в TechTeamVPN</string>
+    <string name="onboarding_1_title">Добро пожаловать в EthicVPN</string>
     <string name="onboarding_1_text">Быстрый и защищённый доступ к интернету. Подключение — одним касанием.</string>
     <string name="onboarding_2_title">Добавьте подписку</string>
     <string name="onboarding_2_text">Скопируйте ссылку подписки, которую вам прислали, и откройте приложение — оно само предложит её добавить. Можно и вставить ключ или отсканировать QR-код.</string>

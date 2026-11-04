@@ -139,7 +139,7 @@ final class VPNManager: ObservableObject {
         proto.includeAllNetworks = killSwitch
         proto.excludeLocalNetworks = killSwitch
         manager.protocolConfiguration = proto
-        manager.localizedDescription = "TechTeamVPN"
+        manager.localizedDescription = "EthicVPN"
         manager.isEnabled = true
         // If the tunnel drops with an error (or the extension is killed), iOS starts it again.
         manager.onDemandRules = [NEOnDemandRuleConnect()]

@@ -32,14 +32,14 @@ public partial class MainWindow : Window
 
         toggleItem = new Forms.ToolStripMenuItem("Подключить", null, async (_, _) => await ToggleAsync());
         var menu = new Forms.ContextMenuStrip();
-        menu.Items.Add("Открыть TechTeamVPN", null, (_, _) => ShowFromTray());
+        menu.Items.Add("Открыть EthicVPN", null, (_, _) => ShowFromTray());
         menu.Items.Add(toggleItem);
         menu.Items.Add(new Forms.ToolStripSeparator());
         menu.Items.Add("Выход", null, (_, _) => Quit());
         tray = new Forms.NotifyIcon
         {
             Icon = AppIcon(),
-            Text = "TechTeamVPN",
+            Text = "EthicVPN",
             Visible = true,
             ContextMenuStrip = menu,
         };
@@ -53,7 +53,7 @@ public partial class MainWindow : Window
             }
             catch (Exception e)
             {
-                MessageBox.Show(this, "Не удалось открыть окно приложения (WebView2):\n\n" + e.Message, "TechTeamVPN",
+                MessageBox.Show(this, "Не удалось открыть окно приложения (WebView2):\n\n" + e.Message, "EthicVPN",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         };
@@ -98,15 +98,15 @@ public partial class MainWindow : Window
     {
         var on = bridge.Status is VpnStatus.Connected or VpnStatus.Connecting;
         toggleItem.Text = on ? "Отключить" : "Подключить";
-        tray.Text = bridge.Status == VpnStatus.Connected ? "TechTeamVPN — подключено" : "TechTeamVPN";
+        tray.Text = bridge.Status == VpnStatus.Connected ? "EthicVPN — подключено" : "EthicVPN";
     }
 
     /// <summary>The tunnel needs admin rights: ask Windows, then hand over to the elevated copy.</summary>
     private void RestartElevated()
     {
         var answer = MessageBox.Show(this,
-            "Режим «Весь трафик» создаёт сетевой адаптер, для этого нужны права администратора. Перезапустить TechTeamVPN с ними?",
-            "TechTeamVPN", MessageBoxButton.OKCancel, MessageBoxImage.Information);
+            "Режим «Весь трафик» создаёт сетевой адаптер, для этого нужны права администратора. Перезапустить EthicVPN с ними?",
+            "EthicVPN", MessageBoxButton.OKCancel, MessageBoxImage.Information);
         if (answer != MessageBoxResult.OK) return;
         bridge.Shutdown();
         if (Elevation.RelaunchAsAdmin("--connect")) Quit();
@@ -126,7 +126,7 @@ public partial class MainWindow : Window
         {
             e.Cancel = true;
             Hide();
-            tray.ShowBalloonTip(2000, "TechTeamVPN", "VPN работает в фоне. Выход — в меню значка.", Forms.ToolTipIcon.Info);
+            tray.ShowBalloonTip(2000, "EthicVPN", "VPN работает в фоне. Выход — в меню значка.", Forms.ToolTipIcon.Info);
             return;
         }
         base.OnClosing(e);

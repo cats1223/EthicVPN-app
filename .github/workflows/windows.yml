@@ -48,9 +48,9 @@ jobs:
           echo "TAG=$TAG" >> "$GITHUB_ENV"
           V="${TAG#windows-v}"
           echo "version=$V" >> "$GITHUB_OUTPUT"
-          echo "setup=TechTeamVPN-Setup-${V:-1.0.0}.exe" >> "$GITHUB_OUTPUT"
+          echo "setup=EthicVPN-Setup-${V:-1.0.0}.exe" >> "$GITHUB_OUTPUT"
           echo "APP_VERSION=${V:-1.0.0}" >> "$GITHUB_ENV"
-          echo "SETUP_NAME=TechTeamVPN-Setup-${V:-1.0.0}.exe" >> "$GITHUB_ENV"
+          echo "SETUP_NAME=EthicVPN-Setup-${V:-1.0.0}.exe" >> "$GITHUB_ENV"
       - name: Unit tests
         run: dotnet test windows/TechTeamVPN.Core.Tests
       - name: MapLibre for the globe
@@ -121,7 +121,7 @@ jobs:
         with:
           tag_name: ${{ env.TAG }}
           target_commitish: ${{ github.sha }}
-          name: TechTeamVPN для Windows ${{ needs.windows.outputs.version }}
+          name: EthicVPN для Windows ${{ needs.windows.outputs.version }}
           prerelease: ${{ contains(env.TAG, '-beta') }}
           make_latest: false
           files: ${{ needs.windows.outputs.setup }}

@@ -1,4 +1,10 @@
-# TechTeamVPN — правила проекта
+# EthicVPN (бывш. TechTeamVPN) — правила проекта
+
+- Название для пользователя — **EthicVPN** (с v1.5.0 / windows-v1.2.0). Внутренние имена (пакет com.techteam.vpn,
+  bundle id, TechTeamVPN.exe, папки данных, AppId установщика, репозиторий) не менять — иначе обновление не встанет поверх.
+- Сервер 213.108.23.40 (Aeza): панель mikan, домены ethicpanel.duckdns.org (панель) и ethicvpn.duckdns.org (VPN);
+  порт 80 держит Caddy мессенджера Ethic, сертификаты mikan — через `scripts/server/mikan-acme-proxy.sh`.
+  Блокировщик торрентов mikan банит пользователя целиком — для своих он выключен.
 
 - **Сборка — всегда через GitHub Actions** (`.github/workflows/build.yml`). У владельца нет Mac и сейчас нет Android-устройства:
   не предлагать локальную сборку в Xcode/Android Studio, а пушить в ветку и отдавать артефакты из Actions.

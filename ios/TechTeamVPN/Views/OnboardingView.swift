@@ -14,7 +14,7 @@ struct OnboardingView: View {
     }
 
     private let slides = [
-        Slide(icon: "checkmark.shield.fill", color: Brand.cyan, title: "Добро пожаловать в TechTeamVPN",
+        Slide(icon: "checkmark.shield.fill", color: Brand.cyan, title: "Добро пожаловать в EthicVPN",
               text: "Быстрый и защищённый доступ к интернету. Подключение — одним касанием."),
         Slide(icon: "link.badge.plus", color: Brand.green, title: "Добавьте подписку",
               text: "Скопируйте ссылку подписки, которую вам прислали, и откройте приложение — оно само предложит её добавить. Можно и вставить ключ или отсканировать QR-код."),

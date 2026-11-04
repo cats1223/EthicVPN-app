@@ -38,7 +38,7 @@ struct StatusWidget: Widget {
         StaticConfiguration(kind: "TechTeamVPNStatus", provider: StatusProvider()) { entry in
             StatusWidgetView(entry: entry)
         }
-        .configurationDisplayName("TechTeamVPN")
+        .configurationDisplayName("EthicVPN")
         .description("Включайте и выключайте VPN прямо с экрана «Домой».")
         .supportedFamilies([.systemSmall, .systemMedium, .accessoryCircular, .accessoryRectangular, .accessoryInline])
     }
@@ -79,7 +79,7 @@ struct StatusWidgetView: View {
                 slider
             }
             Spacer()
-            Text("TechTeamVPN").font(.caption).foregroundStyle(.secondary)
+            Text("EthicVPN").font(.caption).foregroundStyle(.secondary)
             statusLine.font(.headline)
         }
     }
@@ -88,7 +88,7 @@ struct StatusWidgetView: View {
         HStack(spacing: 14) {
             shield(size: 56)
             VStack(alignment: .leading, spacing: 4) {
-                Text("TechTeamVPN").font(.subheadline).foregroundStyle(.secondary)
+                Text("EthicVPN").font(.subheadline).foregroundStyle(.secondary)
                 statusLine.font(.title3.weight(.semibold))
                 Text(entry.connected ? "Нажмите, чтобы отключить" : "Нажмите, чтобы подключить")
                     .font(.caption).foregroundStyle(.secondary)
@@ -119,7 +119,7 @@ struct StatusWidgetView: View {
             Image(systemName: entry.connected ? "checkmark.shield.fill" : "shield.slash")
                 .font(.title2)
             VStack(alignment: .leading, spacing: 1) {
-                Text("TechTeamVPN").font(.headline)
+                Text("EthicVPN").font(.headline)
                 Text(status).font(.caption)
             }
             Spacer(minLength: 0)
@@ -194,7 +194,7 @@ struct TunnelActivityWidget: Widget {
             HStack(spacing: 12) {
                 shield(size: 44)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("TechTeamVPN · Подключено").font(.subheadline.weight(.semibold))
+                    Text("EthicVPN · Подключено").font(.subheadline.weight(.semibold))
                     Text(context.attributes.serverName).font(.caption).foregroundStyle(.secondary).lineLimit(1)
                 }
                 Spacer(minLength: 8)

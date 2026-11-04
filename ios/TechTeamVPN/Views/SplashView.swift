@@ -32,7 +32,7 @@ struct SplashView: View {
                     .opacity(logoIn ? 1 : 0)
                     .blur(radius: logoIn ? 0 : 14)
 
-                Text("TechTeamVPN")
+                Text("EthicVPN")
                     .font(.system(size: 30, weight: .bold, design: .rounded))
                     .tracking(titleIn ? 1.5 : 8)
                     .foregroundStyle(.white)

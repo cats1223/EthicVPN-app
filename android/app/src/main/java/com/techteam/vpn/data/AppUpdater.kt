@@ -53,7 +53,7 @@ object AppUpdater {
         val info = context.packageManager.getPackageArchiveInfo(file.path, 0)
         if (info?.packageName != context.packageName) {
             file.delete()
-            throw IllegalStateException("загруженный файл — не TechTeamVPN")
+            throw IllegalStateException("загруженный файл — не EthicVPN")
         }
         return file
     }

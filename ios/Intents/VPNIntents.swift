@@ -8,7 +8,7 @@ import WidgetKit
 /// owns the VPN configuration; the widget extension only builds the button.
 @available(iOS 17.0, *)
 struct SetVPNIntent: SetValueIntent, LiveActivityIntent {
-    static var title: LocalizedStringResource = "Включить или выключить TechTeamVPN"
+    static var title: LocalizedStringResource = "Включить или выключить EthicVPN"
     static var description = IntentDescription("Подключает или отключает VPN.")
 
     @Parameter(title: "Включён")
@@ -29,25 +29,25 @@ struct SetVPNIntent: SetValueIntent, LiveActivityIntent {
 }
 
 #if !WIDGET
-/// "Включи TechTeamVPN" for Siri and Shortcuts.
+/// "Включи EthicVPN" for Siri and Shortcuts.
 struct ConnectVPNIntent: AppIntent {
-    static var title: LocalizedStringResource = "Включить TechTeamVPN"
+    static var title: LocalizedStringResource = "Включить EthicVPN"
     static var description = IntentDescription("Подключает VPN к выбранному серверу.")
 
     func perform() async throws -> some IntentResult & ProvidesDialog {
         try await VPNControl.set(on: true)
-        return .result(dialog: "TechTeamVPN подключается")
+        return .result(dialog: "EthicVPN подключается")
     }
 }
 
-/// "Выключи TechTeamVPN" for Siri and Shortcuts.
+/// "Выключи EthicVPN" for Siri and Shortcuts.
 struct DisconnectVPNIntent: AppIntent {
-    static var title: LocalizedStringResource = "Выключить TechTeamVPN"
+    static var title: LocalizedStringResource = "Выключить EthicVPN"
     static var description = IntentDescription("Отключает VPN.")
 
     func perform() async throws -> some IntentResult & ProvidesDialog {
         try await VPNControl.set(on: false)
-        return .result(dialog: "TechTeamVPN отключён")
+        return .result(dialog: "EthicVPN отключён")
     }
 }
 
@@ -73,7 +73,7 @@ struct TechTeamShortcuts: AppShortcutsProvider {
 @MainActor
 enum VPNControl {
     struct NoServer: LocalizedError {
-        var errorDescription: String? { String(localized: "Сначала добавьте сервер в TechTeamVPN") }
+        var errorDescription: String? { String(localized: "Сначала добавьте сервер в EthicVPN") }
     }
 
     static func set(on: Bool) async throws {

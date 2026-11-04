@@ -538,7 +538,7 @@ const demo = {
           { id: "de", name: "🇩🇪 Германия", address: "de", network: "tcp", security: "reality" },
           { id: "fi", name: "🇫🇮 Финляндия", address: "fi", network: "ws", security: "tls" },
         ],
-        subscription: { url: "https://panel", info: { title: "TechTeam · Премиум", upload: 2.1e9, download: 14.6e9, total: 107e9, expire: Date.now() / 1000 + 21 * 86400 } },
+        subscription: { url: "https://panel", info: { title: "Ethic · Премиум", upload: 2.1e9, download: 14.6e9, total: 107e9, expire: Date.now() / 1000 + 21 * 86400 } },
         settings: { theme: "dark", mode: "proxy", russiaDirect: true, blockAds: true, autoReconnect: true, killSwitch: true, dns: "" },
       } });
       onMessage({ type: "locations", home: { flag: "🇷🇺", place: "Москва, Россия", latitude: 55.75, longitude: 37.62 },
