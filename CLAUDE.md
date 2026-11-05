@@ -1,12 +1,14 @@
-# EthicVPN (бывш. EthicVPN) — правила проекта
+# EthicVPN (бывш. TechTeamVPN) — правила проекта
 
-- Название для пользователя — **EthicVPN** (с v1.5.0 / windows-v1.2.0). Внутренние имена (пакет com.ethic.vpn,
-  bundle id, EthicVPN.exe, папки данных, AppId установщика, репозиторий) не менять — иначе обновление не встанет поверх.
+- Название — **EthicVPN**, идентификатор com.ethic.vpn (с v1.6.0 / windows-v1.3.0; до этого com.techteam.vpn —
+  отдельное приложение). Репозиторий cats1223/EthicVPN-app. Пакет, bundle id, EthicVPN.exe, папки данных и AppId
+  установщика больше не менять — иначе обновление не встанет поверх.
+- Приложения принимают только подписки https://ethicvpn.duckdns.org (любой порт и путь) — `Subscription.isAllowed`.
 - Сервер 213.108.23.40 (Aeza): панель mikan, домены ethicpanel.duckdns.org (панель) и ethicvpn.duckdns.org (VPN);
   порт 80 держит Caddy мессенджера Ethic, сертификаты mikan — через `scripts/server/mikan-acme-proxy.sh`.
   Блокировщик торрентов mikan банит пользователя целиком — для своих он выключен.
 
-- **Сборка — всегда через GitHub Actions** (`.github/workflows/build.yml`). У владельца нет Mac и сейчас нет Android-устройства:
+- **Сборка — всегда через GitHub Actions** (`.github/workflows/build.yml`). У владельца нет Mac (Android — Xiaomi, iPhone — подпись IPA в Feather):
   не предлагать локальную сборку в Xcode/Android Studio, а пушить в ветку и отдавать артефакты из Actions.
 - iOS подписывается в CI секретами репозитория (см. README → «Подпись iOS в GitHub»); сертификаты и профили никогда не коммитить.
 - Протокол сервиса: VLESS + REALITY + XHTTP (порт 443, нода принимает только режим stream-one), ключи выдаются ссылкой подписки панели.
