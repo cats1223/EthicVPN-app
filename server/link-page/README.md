@@ -1,16 +1,16 @@
 # Переходник для кнопки в Telegram
 
 Кнопки ботов Telegram принимают только `http(s)://`-ссылки, поэтому кнопка ведёт на эту страницу,
-а она открывает приложение по `techteamvpn://add`: приложение предлагает добавить подписку, которую человек скопировал в боте.
+а она открывает приложение по `ethicvpn://add`: приложение предлагает добавить подписку, которую человек скопировал в боте.
 С `?url=<подписка>` страница передаёт приложению эту подписку.
 
 ## Установка на сервер (nginx в Docker, порт 8080)
 
 ```bash
-mkdir -p /root/techteamvpn-link
+mkdir -p /root/ethicvpn-link
 # положите сюда index.html из этой папки
-docker run -d --name techteamvpn-link --restart unless-stopped \
-  -p 8080:80 -v /root/techteamvpn-link:/usr/share/nginx/html:ro nginx:alpine
+docker run -d --name ethicvpn-link --restart unless-stopped \
+  -p 8080:80 -v /root/ethicvpn-link:/usr/share/nginx/html:ro nginx:alpine
 ```
 
 ## Ссылка для кнопки

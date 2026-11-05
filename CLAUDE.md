@@ -1,7 +1,7 @@
-# EthicVPN (бывш. TechTeamVPN) — правила проекта
+# EthicVPN (бывш. EthicVPN) — правила проекта
 
-- Название для пользователя — **EthicVPN** (с v1.5.0 / windows-v1.2.0). Внутренние имена (пакет com.techteam.vpn,
-  bundle id, TechTeamVPN.exe, папки данных, AppId установщика, репозиторий) не менять — иначе обновление не встанет поверх.
+- Название для пользователя — **EthicVPN** (с v1.5.0 / windows-v1.2.0). Внутренние имена (пакет com.ethic.vpn,
+  bundle id, EthicVPN.exe, папки данных, AppId установщика, репозиторий) не менять — иначе обновление не встанет поверх.
 - Сервер 213.108.23.40 (Aeza): панель mikan, домены ethicpanel.duckdns.org (панель) и ethicvpn.duckdns.org (VPN);
   порт 80 держит Caddy мессенджера Ethic, сертификаты mikan — через `scripts/server/mikan-acme-proxy.sh`.
   Блокировщик торрентов mikan банит пользователя целиком — для своих он выключен.
@@ -23,17 +23,17 @@
 - APK подписывается постоянным ключом из секрета `ANDROID_KEYSTORE_BASE64` (debug-формат: пароль android, alias
   androiddebugkey; отпечаток SHA-256 698e8d29…2bb2). CI кладёт его в файл и передаёт Gradle через ANDROID_KEYSTORE_PATH;
   без него каждая сборка с новым ключом не ставится поверх старой и обновление из приложения не работает.
-- iOS-виджет (`ios/Widget`, цель TechTeamWidget, bundle id `<app>.widget`) не видит настроек VPN: статус он берёт по
+- iOS-виджет (`ios/Widget`, цель EthicWidget, bundle id `<app>.widget`) не видит настроек VPN: статус он берёт по
   интерфейсу utun с адресом 172.19.0.1, а переключение — `SetVPNIntent` (LiveActivityIntent), который iOS выполняет в
   самом приложении. Подпись в CI (`scripts/ci/ios-sign.sh`) профиль для виджета пока не умеет — IPA подписывают в Feather.
-- Windows (`windows/`): WPF + WebView2, интерфейс — веб-страница `windows/TechTeamVPN/Web` (тот же дизайн и глобус
+- Windows (`windows/`): WPF + WebView2, интерфейс — веб-страница `windows/EthicVPN/Web` (тот же дизайн и глобус
   MapLibre, что на Android; без WebView2 открывается в браузере в демо-режиме — так проверяется дизайн). Логика —
-  `windows/TechTeamVPN.Core` (порт android/.../core, тесты `TechTeamVPN.Core.Tests`, идут на Linux). Режимы: системный
+  `windows/EthicVPN.Core` (порт android/.../core, тесты `EthicVPN.Core.Tests`, идут на Linux). Режимы: системный
   прокси (без прав) и TUN через встроенный в Xray Wintun (`autoSystemRoutingTable`, нужны права администратора —
   приложение перезапускается elevated). Собирается отдельно: `.github/workflows/windows.yml` по пушу в ветку `windows-release` (версия из `windows/VERSION`; пуш тегов из этой среды не проходит), тег
   `windows-vX.Y.Z` (раздел `## windows-vX.Y.Z` в CHANGELOG), релиз с make_latest: false, чтобы телефоны не приняли его
   за своё обновление; Windows ищет обновления только среди тегов windows-v*. Выпускается одним установщиком Inno Setup
-  (`windows/installer.iss`, TechTeamVPN-Setup-X.Y.Z.exe, ставится в профиль без прав) с xray.exe, wintun.dll, geodata, MapLibre.
+  (`windows/installer.iss`, EthicVPN-Setup-X.Y.Z.exe, ставится в профиль без прав) с xray.exe, wintun.dll, geodata, MapLibre.
 
 ## Память между сжатиями контекста
 

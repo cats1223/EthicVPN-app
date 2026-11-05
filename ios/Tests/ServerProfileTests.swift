@@ -2,7 +2,7 @@ import XCTest
 
 final class ServerProfileTests: XCTestCase {
     private let reality =
-        "vless://0f6e1a3c-7c6e-4a59-9f2a-3d1a7c2b9e01@nl1.techteam.example:443" +
+        "vless://0f6e1a3c-7c6e-4a59-9f2a-3d1a7c2b9e01@nl1.ethic.example:443" +
         "?encryption=none&flow=xtls-rprx-vision&security=reality&sni=www.microsoft.com&fp=chrome" +
         "&pbk=SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc&sid=6ba85179e30d4fc2&spx=%2F&type=tcp" +
         "#🇳🇱 Нидерланды"
@@ -10,7 +10,7 @@ final class ServerProfileTests: XCTestCase {
     func testParsesRealityLink() throws {
         let p = try XCTUnwrap(ServerProfile.parse(reality))
         XCTAssertEqual(p.uuid, "0f6e1a3c-7c6e-4a59-9f2a-3d1a7c2b9e01")
-        XCTAssertEqual(p.address, "nl1.techteam.example")
+        XCTAssertEqual(p.address, "nl1.ethic.example")
         XCTAssertEqual(p.port, 443)
         XCTAssertEqual(p.flow, "xtls-rprx-vision")
         XCTAssertEqual(p.security, "reality")
@@ -51,7 +51,7 @@ final class ServerProfileTests: XCTestCase {
         let out = try XCTUnwrap((root["outbounds"] as? [[String: Any]])?.first)
         XCTAssertEqual(out["protocol"] as? String, "vless")
         let settings = try XCTUnwrap(out["settings"] as? [String: Any])
-        XCTAssertEqual(settings["address"] as? String, "nl1.techteam.example")
+        XCTAssertEqual(settings["address"] as? String, "nl1.ethic.example")
         XCTAssertEqual(settings["port"] as? Int, 443)
         XCTAssertEqual(settings["flow"] as? String, "xtls-rprx-vision")
 
@@ -188,14 +188,14 @@ final class ServerProfileTests: XCTestCase {
 
     func testUnwrapsDeepLinks() {
         let sub = "https://176.0.0.1:50070/abc/def"
-        XCTAssertEqual(DeepLink.unwrap("techteamvpn://add?url=https%3A%2F%2F176.0.0.1%3A50070%2Fabc%2Fdef"), sub)
-        XCTAssertEqual(DeepLink.unwrap("techteamvpn://add/\(sub)"), sub)
-        XCTAssertEqual(DeepLink.unwrap("techteamvpn://add/https%3A%2F%2F176.0.0.1%3A50070%2Fabc%2Fdef"), sub)
+        XCTAssertEqual(DeepLink.unwrap("ethicvpn://add?url=https%3A%2F%2F176.0.0.1%3A50070%2Fabc%2Fdef"), sub)
+        XCTAssertEqual(DeepLink.unwrap("ethicvpn://add/\(sub)"), sub)
+        XCTAssertEqual(DeepLink.unwrap("ethicvpn://add/https%3A%2F%2F176.0.0.1%3A50070%2Fabc%2Fdef"), sub)
         XCTAssertEqual(DeepLink.unwrap("vless://id@h:1"), "vless://id@h:1")
-        XCTAssertEqual(DeepLink.unwrap("techteamvpn://add"), "")
-        XCTAssertTrue(DeepLink.wantsClipboard("techteamvpn://add"))
-        XCTAssertTrue(DeepLink.wantsClipboard("techteamvpn://add/"))
-        XCTAssertFalse(DeepLink.wantsClipboard("techteamvpn://add?url=https%3A%2F%2Fa.b%2Fc"))
+        XCTAssertEqual(DeepLink.unwrap("ethicvpn://add"), "")
+        XCTAssertTrue(DeepLink.wantsClipboard("ethicvpn://add"))
+        XCTAssertTrue(DeepLink.wantsClipboard("ethicvpn://add/"))
+        XCTAssertFalse(DeepLink.wantsClipboard("ethicvpn://add?url=https%3A%2F%2Fa.b%2Fc"))
         XCTAssertFalse(DeepLink.wantsClipboard("vless://id@h:1"))
     }
 

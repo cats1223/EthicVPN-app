@@ -2,9 +2,9 @@ import Foundation
 
 enum AppGroup {
     /// Both come from build settings (APP_GROUP_ID, TUNNEL_BUNDLE_ID) via Info.plist, so CI can re-sign under other ids.
-    static let id = Bundle.main.object(forInfoDictionaryKey: "AppGroupIdentifier") as? String ?? "group.com.techteam.vpn"
+    static let id = Bundle.main.object(forInfoDictionaryKey: "AppGroupIdentifier") as? String ?? "group.com.ethic.vpn"
     static let tunnelBundleId = Bundle.main.object(forInfoDictionaryKey: "TunnelBundleIdentifier") as? String
-        ?? (Bundle.main.bundleIdentifier ?? "com.techteam.vpn") + ".tunnel"
+        ?? (Bundle.main.bundleIdentifier ?? "com.ethic.vpn") + ".tunnel"
 
     static var defaults: UserDefaults { UserDefaults(suiteName: id) ?? .standard }
 

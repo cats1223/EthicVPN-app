@@ -39,7 +39,7 @@ enum SubscriptionError: LocalizedError {
 }
 
 enum Subscription {
-    static let userAgent = "TechTeamVPN/1.0"
+    static let userAgent = "EthicVPN/1.0"
 
     /// - Parameter headers: device headers (`x-hwid` and friends) for panels that bind keys to devices.
     static func fetch(_ url: URL, headers: [String: String] = [:]) async throws -> (profiles: [ServerProfile], info: SubscriptionInfo) {

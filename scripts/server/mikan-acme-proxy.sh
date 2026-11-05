@@ -14,7 +14,7 @@ backup="$CADDYFILE.bak.$(date +%s)"
 cp "$CADDYFILE" "$backup"
 echo "Копия Caddyfile: $backup"
 
-# Drop earlier blocks of this script (marked) and the old hand-written techteamvpn block, then add one for DOMAINS.
+# Drop the block an earlier run of this script added (marked), then add one for DOMAINS.
 python3 - "$CADDYFILE" "$LISTEN" "${DOMAINS[@]}" <<'PY'
 import sys
 path, listen, domains = sys.argv[1], sys.argv[2], sys.argv[3:]
@@ -22,10 +22,9 @@ lines = open(path).read().splitlines()
 out, skip, depth = [], False, 0
 for line in lines:
     s = line.strip()
-    if not skip and (s == "# mikan-acme-proxy" or s.startswith("http://techteamvpn.duckdns.org")):
+    if not skip and s == "# mikan-acme-proxy":
         skip, depth = True, 0
-        if s == "# mikan-acme-proxy":
-            continue
+        continue
     if skip:
         depth += line.count("{") - line.count("}")
         if "{" in line and depth == 0 or "}" in line and depth <= 0:

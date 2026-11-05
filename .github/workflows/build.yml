@@ -28,7 +28,7 @@ jobs:
       - name: Signing key
         run: |
           if [ -n "$ANDROID_KEYSTORE_BASE64" ]; then
-            KEYSTORE="$RUNNER_TEMP/techteamvpn.keystore"
+            KEYSTORE="$RUNNER_TEMP/ethicvpn.keystore"
             echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$KEYSTORE"
             # Fails here if the secret is not the expected keystore; the fingerprint is public.
             keytool -list -keystore "$KEYSTORE" -storepass android -alias androiddebugkey | grep -i "SHA-256"
@@ -53,7 +53,7 @@ jobs:
         run: ./gradlew --no-daemon testDebugUnitTest assembleDebug
       - uses: actions/upload-artifact@v4
         with:
-          name: TechTeamVPN-android
+          name: EthicVPN-android
           path: android/app/build/outputs/apk/debug/*.apk
 
   ios:
@@ -81,26 +81,29 @@ jobs:
       - name: Archive (unsigned)
         working-directory: ios
         run: |
-          xcodebuild archive -project TechTeamVPN.xcodeproj -scheme TechTeamVPN \
-            -destination 'generic/platform=iOS' -archivePath build/TechTeamVPN.xcarchive \
+          xcodebuild archive -project EthicVPN.xcodeproj -scheme EthicVPN \
+            -destination 'generic/platform=iOS' -archivePath build/EthicVPN.xcarchive \
             CODE_SIGNING_ALLOWED=NO CURRENT_PROJECT_VERSION=${{ github.run_number }} \
             ${APP_VERSION:+MARKETING_VERSION=${APP_VERSION%%-*} APP_DISPLAY_VERSION=$APP_VERSION}
           mkdir -p build/Payload
-          cp -R build/TechTeamVPN.xcarchive/Products/Applications/TechTeamVPN.app build/Payload/
-          (cd build && zip -qry TechTeamVPN-unsigned.ipa Payload)
+          cp -R build/EthicVPN.xcarchive/Products/Applications/EthicVPN.app build/Payload/
+          (cd build && zip -qry EthicVPN-unsigned.ipa Payload)
       - uses: actions/upload-artifact@v4
         with:
-          name: TechTeamVPN-ios-unsigned
-          path: ios/build/TechTeamVPN-unsigned.ipa
+          name: EthicVPN-ios-unsigned
+          path: ios/build/EthicVPN-unsigned.ipa
+      # The profiles in the secrets are made for one bundle id; a mismatch must not stop the release.
       - name: Signed IPA
+        id: signed
         if: env.IOS_P12_BASE64 != ''
+        continue-on-error: true
         working-directory: ios
         run: ../scripts/ci/ios-sign.sh
       - uses: actions/upload-artifact@v4
-        if: env.IOS_P12_BASE64 != ''
+        if: steps.signed.outcome == 'success'
         with:
-          name: TechTeamVPN-ios-signed
-          path: ios/build/TechTeamVPN.ipa
+          name: EthicVPN-ios-signed
+          path: ios/build/EthicVPN.ipa
       # The shared logic is unit-tested on Android too; the simulator run is skipped for releases to save time.
       - name: Unit tests
         if: env.RELEASE_TAG == ''
@@ -109,7 +112,7 @@ jobs:
           # Simulator names change with each Xcode, so take the first available iPhone.
           DEVICE=$(xcrun simctl list devices available | grep -m1 -oE 'iPhone [^(]+' | sed 's/ *$//')
           echo "Testing on $DEVICE"
-          xcodebuild test -project TechTeamVPN.xcodeproj -scheme TechTeamVPN \
+          xcodebuild test -project EthicVPN.xcodeproj -scheme EthicVPN \
             -destination "platform=iOS Simulator,name=$DEVICE" CODE_SIGNING_ALLOWED=NO
 
   release:
@@ -128,16 +131,16 @@ jobs:
           sparse-checkout-cone-mode: false
       - uses: actions/download-artifact@v4
         with:
-          name: TechTeamVPN-android
+          name: EthicVPN-android
           path: android
       - uses: actions/download-artifact@v4
         with:
-          name: TechTeamVPN-ios-unsigned
+          name: EthicVPN-ios-unsigned
           path: ios
       - name: Name the files
         run: |
           cp android/app-universal-debug.apk "EthicVPN-${TAG}.apk"
-          cp ios/TechTeamVPN-unsigned.ipa "EthicVPN-${TAG}-unsigned.ipa"
+          cp ios/EthicVPN-unsigned.ipa "EthicVPN-${TAG}-unsigned.ipa"
       # A tag with a suffix (v1.2.0-beta.1) is a beta: published as a pre-release, which the apps'
       # update check never sees, since it asks GitHub for the latest full release.
       - name: Beta or release

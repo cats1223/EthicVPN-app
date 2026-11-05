@@ -52,7 +52,7 @@ struct DisconnectVPNIntent: AppIntent {
 }
 
 /// Phrases Siri knows without any setup; they also appear in the Shortcuts app.
-struct TechTeamShortcuts: AppShortcutsProvider {
+struct EthicShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
         AppShortcut(
             intent: ConnectVPNIntent(),

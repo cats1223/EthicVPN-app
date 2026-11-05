@@ -5,5 +5,5 @@ __pycache__/
 # Windows app: build output and MapLibre (downloaded by CI)
 windows/**/bin/
 windows/**/obj/
-windows/TechTeamVPN/Web/vendor/
+windows/EthicVPN/Web/vendor/
 windows/MicrosoftEdgeWebview2Setup.exe

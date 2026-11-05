@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.techteam.vpn"
+    namespace = "com.ethic.vpn"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.techteam.vpn"
+        applicationId = "com.ethic.vpn"
         minSdk = 26
         targetSdk = 35
         // CI stamps the build number, the same one the iOS build shows.

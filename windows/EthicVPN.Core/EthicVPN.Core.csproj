@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Link parsing, subscriptions and the Xray config, shared logic ported from android/.../core.
+       Plain net8.0, so the tests run on any OS. -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>EthicVPN.Core</RootNamespace>
+  </PropertyGroup>
+</Project>

@@ -5,9 +5,9 @@ import FoundationNetworking
 
 /// Checks GitHub for a newer release of the app.
 enum Updates {
-    static let latestURL = URL(string: "https://api.github.com/repos/cats1223/TechTeamVPN-app/releases/latest")!
+    static let latestURL = URL(string: "https://api.github.com/repos/cats1223/EthicVPN-app/releases/latest")!
     /// All releases, betas included; used when the user opted into betas. GitHub may sort them by tag name.
-    static let allURL = URL(string: "https://api.github.com/repos/cats1223/TechTeamVPN-app/releases?per_page=100")!
+    static let allURL = URL(string: "https://api.github.com/repos/cats1223/EthicVPN-app/releases?per_page=100")!
 
     struct Release: Equatable {
         var version: String

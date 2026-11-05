@@ -8,12 +8,12 @@
 
 VLESS · REALITY · XHTTP на ядре [Xray-core](https://github.com/XTLS/Xray-core)
 
-[![Релиз](https://img.shields.io/github/v/release/cats1223/TechTeamVPN-app?label=%D1%80%D0%B5%D0%BB%D0%B8%D0%B7&color=00D1FF)](https://github.com/cats1223/TechTeamVPN-app/releases/latest)
+[![Релиз](https://img.shields.io/github/v/release/cats1223/EthicVPN-app?label=%D1%80%D0%B5%D0%BB%D0%B8%D0%B7&color=00D1FF)](https://github.com/cats1223/EthicVPN-app/releases/latest)
 ![iOS 16+](https://img.shields.io/badge/iOS-16%2B-7B5CFF)
 ![Android 8+](https://img.shields.io/badge/Android-8%2B-2BD98B)
-[![Сборка](https://img.shields.io/github/actions/workflow/status/cats1223/TechTeamVPN-app/build.yml?branch=main&label=%D1%81%D0%B1%D0%BE%D1%80%D0%BA%D0%B0)](https://github.com/cats1223/TechTeamVPN-app/actions)
+[![Сборка](https://img.shields.io/github/actions/workflow/status/cats1223/EthicVPN-app/build.yml?branch=main&label=%D1%81%D0%B1%D0%BE%D1%80%D0%BA%D0%B0)](https://github.com/cats1223/EthicVPN-app/actions)
 
-[**Скачать**](https://github.com/cats1223/TechTeamVPN-app/releases/latest) · [Добавить подписку](https://cats1223.github.io/TechTeamVPN-app/)
+[**Скачать**](https://github.com/cats1223/EthicVPN-app/releases/latest) · [Добавить подписку](https://cats1223.github.io/EthicVPN-app/)
 
 </div>
 
@@ -35,7 +35,7 @@ VLESS · REALITY · XHTTP на ядре [Xray-core](https://github.com/XTLS/Xray
 
 ## Установка
 
-Все версии — на странице [**Релизы**](https://github.com/cats1223/TechTeamVPN-app/releases/latest).
+Все версии — на странице [**Релизы**](https://github.com/cats1223/EthicVPN-app/releases/latest).
 
 | Платформа | Файл | Как установить |
 |---|---|---|
@@ -45,12 +45,12 @@ VLESS · REALITY · XHTTP на ядре [Xray-core](https://github.com/XTLS/Xray
 ## Как добавить подписку
 
 1. В Telegram-боте сервиса скопируйте ссылку подписки.
-2. Откройте [cats1223.github.io/TechTeamVPN-app](https://cats1223.github.io/TechTeamVPN-app/) и нажмите **«Открыть EthicVPN»**.
+2. Откройте [cats1223.github.io/EthicVPN-app](https://cats1223.github.io/EthicVPN-app/) и нажмите **«Открыть EthicVPN»**.
 3. Приложение спросит **«Добавить подписку?»** — нажмите «Добавить». На iPhone разрешите вставку из буфера.
 
 Можно и вручную: **Серверы → «+»** → вставьте ссылку или отсканируйте QR-код.
 
-Приложение открывает ссылки `vless://…` и `techteamvpn://add?url=<ссылка подписки>`.
+Приложение открывает ссылки `vless://…` и `ethicvpn://add?url=<ссылка подписки>`.
 
 ---
 
@@ -65,9 +65,9 @@ android/                     Kotlin, Jetpack Compose, VpnService
   app/src/main/java/.../vpn  VpnService: TUN → Xray
 ios/                         Swift, SwiftUI (проект генерирует XcodeGen)
   Shared/                    общий код приложения и VPN-расширения
-  TechTeamVPN/               приложение
+  EthicVPN/               приложение
   PacketTunnel/              Network Extension: находит fd utun и запускает Xray
-docs/                        страница «Открыть TechTeamVPN» (GitHub Pages)
+docs/                        страница «Открыть EthicVPN» (GitHub Pages)
 server/link-page/            та же страница для своего сервера
 geodata/                     российские IP и сайты для раздельного туннелирования
 scripts/update-geodata.py    обновление geodata/ из списков v2fly
@@ -94,7 +94,7 @@ scripts/build-libxray.sh android        # нужны Go 1.25+ и Android NDK
 cd android && ./gradlew assembleDebug
 
 scripts/build-libxray.sh ios            # только macOS + Xcode
-cd ios && xcodegen && open TechTeamVPN.xcodeproj
+cd ios && xcodegen && open EthicVPN.xcodeproj
 ```
 
 </details>
@@ -102,7 +102,7 @@ cd ios && xcodegen && open TechTeamVPN.xcodeproj
 <details>
 <summary><b>Подпись iOS в GitHub</b></summary>
 
-Если добавить секреты репозитория, CI выпустит ещё и подписанный IPA (`TechTeamVPN-ios-signed`):
+Если добавить секреты репозитория, CI выпустит ещё и подписанный IPA (`EthicVPN-ios-signed`):
 
 | Секрет | Что положить |
 |---|---|

@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "TechTeamVPN"
+rootProject.name = "EthicVPN"
 include(":app")

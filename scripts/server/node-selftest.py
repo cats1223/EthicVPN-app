@@ -15,7 +15,7 @@ SCHEMES = ("vless", "trojan", "hysteria2", "hy2")
 
 def fetch_subscription(url):
     req = urllib.request.Request(url, headers={
-        "User-Agent": "TechTeamVPN/1.0", "x-hwid": "server-selftest",
+        "User-Agent": "EthicVPN/1.0", "x-hwid": "server-selftest",
         "x-device-os": "Linux", "x-ver-os": "selftest", "x-device-model": "server",
     })
     ctx = ssl.create_default_context()

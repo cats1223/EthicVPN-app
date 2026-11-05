@@ -52,15 +52,15 @@ jobs:
           echo "APP_VERSION=${V:-1.0.0}" >> "$GITHUB_ENV"
           echo "SETUP_NAME=EthicVPN-Setup-${V:-1.0.0}.exe" >> "$GITHUB_ENV"
       - name: Unit tests
-        run: dotnet test windows/TechTeamVPN.Core.Tests
+        run: dotnet test windows/EthicVPN.Core.Tests
       - name: MapLibre for the globe
         run: |
-          mkdir -p windows/TechTeamVPN/Web/vendor
-          curl -sSfL -o windows/TechTeamVPN/Web/vendor/maplibre-gl.js "https://unpkg.com/maplibre-gl@${MAPLIBRE_VERSION}/dist/maplibre-gl.js"
-          curl -sSfL -o windows/TechTeamVPN/Web/vendor/maplibre-gl.css "https://unpkg.com/maplibre-gl@${MAPLIBRE_VERSION}/dist/maplibre-gl.css"
+          mkdir -p windows/EthicVPN/Web/vendor
+          curl -sSfL -o windows/EthicVPN/Web/vendor/maplibre-gl.js "https://unpkg.com/maplibre-gl@${MAPLIBRE_VERSION}/dist/maplibre-gl.js"
+          curl -sSfL -o windows/EthicVPN/Web/vendor/maplibre-gl.css "https://unpkg.com/maplibre-gl@${MAPLIBRE_VERSION}/dist/maplibre-gl.css"
       - name: Publish
         run: |
-          dotnet publish windows/TechTeamVPN/TechTeamVPN.csproj -c Release -r win-x64 --self-contained \
+          dotnet publish windows/EthicVPN/EthicVPN.csproj -c Release -r win-x64 --self-contained \
             -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:AppVersion="$APP_VERSION" -o out
       - name: Xray, Wintun and geodata
         shell: pwsh
@@ -86,7 +86,7 @@ jobs:
           Get-ChildItem *.exe
       - uses: actions/upload-artifact@v4
         with:
-          name: TechTeamVPN-windows
+          name: EthicVPN-windows
           path: ${{ env.SETUP_NAME }}
 
   release:
@@ -104,7 +104,7 @@ jobs:
           sparse-checkout-cone-mode: false
       - uses: actions/download-artifact@v4
         with:
-          name: TechTeamVPN-windows
+          name: EthicVPN-windows
       - name: Release notes
         run: |
           {

@@ -51,12 +51,12 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
         }
 
         captureCrashOutput()
-        appendLog("TechTeamVPN: \(profile.summary)\(options == nil ? " (перезапуск системой)" : "")")
-        appendLog("TechTeamVPN: log \(logURL.path), App Group \(AppGroup.logURL == nil ? "нет в профиле подписи" : "есть")")
+        appendLog("EthicVPN: \(profile.summary)\(options == nil ? " (перезапуск системой)" : "")")
+        appendLog("EthicVPN: log \(logURL.path), App Group \(AppGroup.logURL == nil ? "нет в профиле подписи" : "есть")")
         do {
             try await setTunnelNetworkSettings(networkSettings(for: profile))
             guard let fd = tunnelFileDescriptor else { throw TunnelError.noTunDescriptor }
-            appendLog("TechTeamVPN: utun fd \(fd), starting Xray")
+            appendLog("EthicVPN: utun fd \(fd), starting Xray")
             let verbose = options?["verbose"] as? String == "1" || options?["diagnose"] as? String == "1"
                 || (options == nil && providerConfig?["verbose"] as? Bool == true)
             let russiaDirect = providerConfig?["russiaDirect"] as? Bool ?? true
@@ -69,7 +69,7 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
             )
             // geoip.dat and geosite.dat are bundled with the extension (geodata/ in project.yml).
             let assetDir = Bundle.main.resourceURL?.appendingPathComponent("geodata").path
-            appendLog("TechTeamVPN: russian sites direct \(russiaDirect ? "on" : "off"), ads \(blockAds ? "blocked" : "allowed")")
+            appendLog("EthicVPN: russian sites direct \(russiaDirect ? "on" : "off"), ads \(blockAds ? "blocked" : "allowed")")
             let config = try XrayConfig.build(
                 profile, tunFd: fd, logPath: verbose ? logURL.path : nil, russiaDirect: russiaDirect, assetDir: assetDir,
                 directSites: providerConfig?["directSites"] as? [String] ?? [],
@@ -77,12 +77,12 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
                 blockAds: blockAds, dns: dns, accessLogPath: access?.path
             )
             try XrayCore.run(config)
-            appendLog("TechTeamVPN: Xray started, memory \(Self.memoryMB()) MB")
+            appendLog("EthicVPN: Xray started, memory \(Self.memoryMB()) MB")
             log.info("Xray started for \(profile.name, privacy: .public)")
             if options?["diagnose"] as? String == "1" { scheduleDiagnosticStop() } else { watchMemory() }
             countTraffic()
         } catch {
-            appendLog("TechTeamVPN: start failed: \(error.localizedDescription)")
+            appendLog("EthicVPN: start failed: \(error.localizedDescription)")
             throw error
         }
     }
@@ -135,7 +135,7 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
             while !Task.isCancelled {
                 try? await Task.sleep(nanoseconds: 30_000_000_000)
                 guard let self else { return }
-                self.appendLog("TechTeamVPN: memory \(Self.memoryMB()) MB")
+                self.appendLog("EthicVPN: memory \(Self.memoryMB()) MB")
                 if self.notes.count > 200 { self.notes.removeFirst(self.notes.count - 200) }
             }
         }
@@ -147,10 +147,10 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
         diagnoseTask = Task { [weak self] in
             for second in stride(from: 5, through: 20, by: 5) {
                 try? await Task.sleep(nanoseconds: 5_000_000_000)
-                self?.appendLog("TechTeamVPN: \(second) s, memory \(Self.memoryMB()) MB")
+                self?.appendLog("EthicVPN: \(second) s, memory \(Self.memoryMB()) MB")
             }
             guard let self else { return }
-            let error = NSError(domain: "TechTeamVPN", code: 1, userInfo: [NSLocalizedDescriptionKey: self.report(limit: 8000)])
+            let error = NSError(domain: "EthicVPN", code: 1, userInfo: [NSLocalizedDescriptionKey: self.report(limit: 8000)])
             self.cancelTunnelWithError(error)
         }
     }

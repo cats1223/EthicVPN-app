@@ -27,7 +27,7 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.TechTeamVPN">
+        android:theme="@style/Theme.EthicVPN">
 
         <activity
             android:name=".ui.MainActivity"
@@ -46,12 +46,12 @@
                 <data android:scheme="vless" />
                 <data android:scheme="trojan" />
             </intent-filter>
-            <!-- techteamvpn://add?url=... from the Telegram bot imports a subscription. -->
+            <!-- ethicvpn://add?url=... from the Telegram bot imports a subscription. -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="techteamvpn" />
+                <data android:scheme="ethicvpn" />
             </intent-filter>
         </activity>
 
@@ -100,7 +100,7 @@
         </provider>
 
         <service
-            android:name=".vpn.TechTeamVpnService"
+            android:name=".vpn.EthicVpnService"
             android:exported="false"
             android:foregroundServiceType="specialUse"
             android:permission="android.permission.BIND_VPN_SERVICE">

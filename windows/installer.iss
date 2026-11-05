@@ -10,27 +10,27 @@
 #endif
 
 [Setup]
-AppId={{7C1E9F4A-5B2D-4E8A-9C3F-TECHTEAMVPN01}
+AppId={{3E8B5D21-9A4C-4F6E-B7D2-5C1A8E9F0B64}
 AppName=EthicVPN
 AppVersion={#AppVersion}
 AppVerName=EthicVPN {#AppVersion}
 AppPublisher=Ethic
-AppPublisherURL=https://github.com/cats1223/TechTeamVPN-app
-DefaultDirName={localappdata}\Programs\TechTeamVPN
+AppPublisherURL=https://github.com/cats1223/EthicVPN-app
+DefaultDirName={localappdata}\Programs\EthicVPN
 DisableDirPage=yes
 DisableProgramGroupPage=yes
 PrivilegesRequired=lowest
 OutputDir=.
 OutputBaseFilename=EthicVPN-Setup-{#AppVersion}
-SetupIconFile=TechTeamVPN\icon.ico
-UninstallDisplayIcon={app}\TechTeamVPN.exe
+SetupIconFile=EthicVPN\icon.ico
+UninstallDisplayIcon={app}\EthicVPN.exe
 Compression=lzma2/ultra64
 SolidCompression=yes
 WizardStyle=modern
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 ; An update closes the running app first (App.xaml.cs holds this mutex).
-AppMutex=TechTeamVPN.SingleInstance
+AppMutex=EthicVPN.SingleInstance,TechTeamVPN.SingleInstance
 CloseApplications=yes
 
 [Languages]
@@ -48,20 +48,15 @@ Source: "{#SourceDir}\wintun.dll"; DestDir: "{app}"; Flags: promptifolder
 Source: "MicrosoftEdgeWebview2Setup.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall; Check: not WebView2Installed
 
 [Icons]
-Name: "{autoprograms}\EthicVPN"; Filename: "{app}\TechTeamVPN.exe"
-Name: "{autodesktop}\EthicVPN"; Filename: "{app}\TechTeamVPN.exe"; Tasks: desktopicon
+Name: "{autoprograms}\EthicVPN"; Filename: "{app}\EthicVPN.exe"
+Name: "{autodesktop}\EthicVPN"; Filename: "{app}\EthicVPN.exe"; Tasks: desktopicon
 
 [Run]
 Filename: "{tmp}\MicrosoftEdgeWebview2Setup.exe"; Parameters: "/silent /install"; StatusMsg: "Установка Microsoft Edge WebView2…"; Check: not WebView2Installed
-Filename: "{app}\TechTeamVPN.exe"; Description: "{cm:LaunchProgram,EthicVPN}"; Flags: nowait postinstall skipifsilent
-
-; Shortcuts of the versions named TechTeamVPN: replaced by the EthicVPN ones above.
-[InstallDelete]
-Type: files; Name: "{autoprograms}\TechTeamVPN.lnk"
-Type: files; Name: "{autodesktop}\TechTeamVPN.lnk"
+Filename: "{app}\EthicVPN.exe"; Description: "{cm:LaunchProgram,EthicVPN}"; Flags: nowait postinstall skipifsilent
 
 [UninstallDelete]
-Type: filesandordirs; Name: "{localappdata}\TechTeamVPN"
+Type: filesandordirs; Name: "{localappdata}\EthicVPN"
 
 [Code]
 { The tunnel mode runs elevated, and this per-user setup cannot close it: ask the user to quit first. }
@@ -72,6 +67,39 @@ begin
   Result := '';
   if Exec(ExpandConstant('{cmd}'), '/C tasklist /FI "IMAGENAME eq xray.exe" | find /I "xray.exe" >NUL', '', SW_HIDE, ewWaitUntilTerminated, Code) and (Code = 0) then
     Result := 'EthicVPN ещё работает. Выйдите из него (значок в трее у часов → «Выход») и нажмите «Назад», затем «Установить».';
+end;
+
+{ The app used to be called TechTeamVPN, with another AppId: its settings move to the new folder, its
+  autostart entry is replaced, and it is uninstalled silently, so one installation is left. }
+const
+  OldAppId = '{7C1E9F4A-5B2D-4E8A-9C3F-TECHTEAMVPN01}_is1';
+  OldName = 'TechTeamVPN';
+  RunKey = 'Software\Microsoft\Windows\CurrentVersion\Run';
+
+procedure ReplaceOldApp;
+var
+  OldState, NewDir, Uninstaller, AutoStart: String;
+  Code: Integer;
+begin
+  OldState := ExpandConstant('{userappdata}\' + OldName + '\state.json');
+  NewDir := ExpandConstant('{userappdata}\EthicVPN');
+  if FileExists(OldState) and not FileExists(NewDir + '\state.json') then
+  begin
+    ForceDirectories(NewDir);
+    FileCopy(OldState, NewDir + '\state.json', True);
+  end;
+  if RegQueryStringValue(HKCU, RunKey, OldName, AutoStart) then
+  begin
+    RegDeleteValue(HKCU, RunKey, OldName);
+    RegWriteStringValue(HKCU, RunKey, 'EthicVPN', '"' + ExpandConstant('{app}\EthicVPN.exe') + '" --minimized');
+  end;
+  if RegQueryStringValue(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Uninstall\' + OldAppId, 'UninstallString', Uninstaller) then
+    Exec(RemoveQuotes(Uninstaller), '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART', '', SW_HIDE, ewWaitUntilTerminated, Code);
+end;
+
+procedure CurStepChanged(CurStep: TSetupStep);
+begin
+  if CurStep = ssInstall then ReplaceOldApp;
 end;
 
 { The window of the app is WebView2; its runtime registers under EdgeUpdate, machine-wide or per user. }

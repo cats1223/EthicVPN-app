@@ -59,7 +59,7 @@ enum GeoIP {
         defer { session.finishTasksAndInvalidate() }
         for url in urls(ip) {
             var request = URLRequest(url: url, timeoutInterval: 8)
-            request.setValue("TechTeamVPN", forHTTPHeaderField: "User-Agent")
+            request.setValue("EthicVPN", forHTTPHeaderField: "User-Agent")
             if let (data, _) = try? await session.data(for: request), let location = parse(data) { return location }
         }
         return nil
