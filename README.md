@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="branding/play-store-icon-512.png" width="140" alt="EthicVPN">
+<img src="branding/ethicvpn-icon-512.png" width="140" alt="EthicVPN">
 
 # EthicVPN
 
