@@ -187,4 +187,16 @@ public class CoreTests
     [Fact]
     public void CountsBlockedAds() =>
         Assert.Equal(2, XrayConfig.CountBlocked("a [tun-in -> block]\nb [socks-in -> direct]\nc [http-in -> block]\n"));
+
+    [Theory]
+    [InlineData("https://ethicvpn.duckdns.org:50070/POhEz/abc", true)]
+    [InlineData("https://EthicVPN.duckdns.org/sub", true)]
+    [InlineData("https://ethicvpn.duckdns.org", true)]
+    [InlineData("http://ethicvpn.duckdns.org:50070/x", false)]
+    [InlineData("https://ethicvpn.duckdns.org.evil.com/x", false)]
+    [InlineData("https://evil.com/?ethicvpn.duckdns.org", false)]
+    [InlineData("https://ethicpanel.duckdns.org/x", false)]
+    [InlineData("vless://id@ethicvpn.duckdns.org:443#x", false)]
+    [InlineData("https://x@evil.com", false)]
+    public void AcceptsOnlyEthicSubscriptions(string url, bool allowed) => Assert.Equal(allowed, Subscription.IsAllowed(url));
 }

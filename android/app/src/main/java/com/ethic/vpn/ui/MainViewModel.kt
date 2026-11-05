@@ -10,6 +10,7 @@ import com.ethic.vpn.R
 import com.ethic.vpn.core.Changelog
 import com.ethic.vpn.core.DeepLink
 import com.ethic.vpn.core.GeoIP
+import com.ethic.vpn.core.Subscription
 import com.ethic.vpn.core.Updates
 import com.ethic.vpn.data.AppSettings
 import com.ethic.vpn.data.AppUpdater
@@ -251,13 +252,9 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     fun addInput(text: String) {
         val input = DeepLink.unwrap(text)
         when {
-            input.startsWith("http://", true) || input.startsWith("https://", true) -> setSubscription(input)
-            else -> {
-                val added = repo.addLinks(input)
-                toast(
-                    if (added > 0) str(R.string.msg_added, added) else str(R.string.msg_invalid_key),
-                )
-            }
+            Subscription.isAllowed(input) -> setSubscription(input)
+            // A closed service: single keys and other panels' subscriptions are not taken.
+            else -> toast(str(R.string.msg_only_subscription))
         }
     }
 

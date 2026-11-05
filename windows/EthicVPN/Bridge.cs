@@ -199,24 +199,14 @@ public sealed class Bridge
     private async Task AddAsync(string text)
     {
         text = text.Trim();
-        if (text.StartsWith("http://") || text.StartsWith("https://"))
+        // A closed service: only EthicVPN subscription links, no single keys or other panels.
+        if (!Subscription.IsAllowed(text))
         {
-            state.SubscriptionUrl = text;
-            await RefreshSubscriptionAsync(silent: false);
+            Toast(Subscription.NotAllowed);
             return;
         }
-        var parsed = Subscription.ParseLinks(text);
-        if (parsed.Count == 0)
-        {
-            Toast("Не удалось распознать ключ");
-            return;
-        }
-        state.Profiles.AddRange(parsed);
-        state.SelectedId ??= parsed[0].Id;
-        Save();
-        Toast($"Добавлено серверов: {parsed.Count}");
-        _ = PingAllAsync();
-        foreach (var p in parsed) _ = LocateServerAsync(p);
+        state.SubscriptionUrl = text;
+        await RefreshSubscriptionAsync(silent: false);
     }
 
     private async Task RefreshSubscriptionAsync(bool silent)

@@ -63,6 +63,7 @@
     <string name="sites_proxy">Всегда через VPN</string>
     <string name="sites_direct_hint">Эти сайты открываются без VPN, с вашего обычного адреса. Поддомены тоже.</string>
     <string name="sites_proxy_hint">Эти сайты идут через VPN, даже если они российские. Поддомены тоже.</string>
+    <string name="msg_only_subscription">Принимаются только ссылки подписки EthicVPN — https://ethicvpn.duckdns.org/…</string>
     <string name="msg_invalid_key">Не удалось распознать ключ</string>
     <string name="msg_subscription_updated">Подписка обновлена</string>
     <string name="msg_subscription_error">Ошибка подписки: %1$s</string>

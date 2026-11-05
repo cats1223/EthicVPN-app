@@ -23,6 +23,7 @@ enum SubscriptionError: LocalizedError {
     case deviceLimit(String)
     case noDeviceID
     case notSubscription
+    case notAllowed
 
     var errorDescription: String? {
         switch self {
@@ -34,6 +35,8 @@ enum SubscriptionError: LocalizedError {
         case .noDeviceID: return NSLocalizedString("Панель не получила идентификатор устройства", comment: "")
         case .notSubscription:
             return NSLocalizedString("По ссылке открывается страница, а не подписка. Попросите ссылку подписки ещё раз", comment: "")
+        case .notAllowed:
+            return NSLocalizedString("Принимаются только ссылки подписки EthicVPN — https://ethicvpn.duckdns.org/…", comment: "")
         }
     }
 }
@@ -41,8 +44,18 @@ enum SubscriptionError: LocalizedError {
 enum Subscription {
     static let userAgent = "EthicVPN/1.0"
 
+    /// The closed service: subscriptions are taken from this host only (any port and path, HTTPS).
+    static let allowedHost = "ethicvpn.duckdns.org"
+
+    /// Whether `url` is an EthicVPN subscription: https://ethicvpn.duckdns.org with any port and path.
+    static func isAllowed(_ url: String) -> Bool {
+        guard let c = URLComponents(string: url.trimmingCharacters(in: .whitespacesAndNewlines)) else { return false }
+        return c.scheme?.lowercased() == "https" && c.host?.lowercased() == allowedHost
+    }
+
     /// - Parameter headers: device headers (`x-hwid` and friends) for panels that bind keys to devices.
     static func fetch(_ url: URL, headers: [String: String] = [:]) async throws -> (profiles: [ServerProfile], info: SubscriptionInfo) {
+        guard isAllowed(url.absoluteString) else { throw SubscriptionError.notAllowed }
         var request = URLRequest(url: url, timeoutInterval: 15)
         request.setValue(userAgent, forHTTPHeaderField: "User-Agent")
         for (name, value) in headers { request.setValue(value, forHTTPHeaderField: name) }

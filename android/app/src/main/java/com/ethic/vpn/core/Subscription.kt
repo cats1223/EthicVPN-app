@@ -22,11 +22,22 @@ data class SubscriptionResult(val profiles: List<ServerProfile>, val info: Subsc
 object Subscription {
     const val USER_AGENT = "EthicVPN/1.0"
 
+    /** The closed service: the app takes subscriptions from this host only (any port and path, HTTPS). */
+    const val ALLOWED_HOST = "ethicvpn.duckdns.org"
+    const val NOT_ALLOWED = "Принимаются только ссылки подписки EthicVPN (https://ethicvpn.duckdns.org/…)"
+
+    /** Whether [url] is an EthicVPN subscription: https://ethicvpn.duckdns.org with any port and path. */
+    fun isAllowed(url: String): Boolean {
+        val uri = runCatching { java.net.URI(url.trim()) }.getOrNull() ?: return false
+        return uri.scheme.equals("https", ignoreCase = true) && uri.host.equals(ALLOWED_HOST, ignoreCase = true)
+    }
+
     /**
      * Blocking; call off the main thread.
      * @param headers device headers (`x-hwid` and friends) for panels that bind keys to devices.
      */
     fun fetch(url: String, headers: Map<String, String> = emptyMap()): SubscriptionResult {
+        require(isAllowed(url)) { NOT_ALLOWED }
         val conn = (URL(url).openConnection() as HttpURLConnection).apply {
             connectTimeout = 15_000
             readTimeout = 15_000

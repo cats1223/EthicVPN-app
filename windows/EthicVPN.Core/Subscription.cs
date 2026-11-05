@@ -23,9 +23,20 @@ public static class Subscription
 {
     public const string UserAgent = "EthicVPN/1.0";
 
+    /// <summary>The closed service: subscriptions are taken from this host only (any port and path, HTTPS).</summary>
+    public const string AllowedHost = "ethicvpn.duckdns.org";
+    public const string NotAllowed = "Принимаются только ссылки подписки EthicVPN — https://ethicvpn.duckdns.org/…";
+
+    /// <summary>Whether <paramref name="url"/> is an EthicVPN subscription: https://ethicvpn.duckdns.org with any port and path.</summary>
+    public static bool IsAllowed(string url) =>
+        Uri.TryCreate(url.Trim(), UriKind.Absolute, out var u)
+        && u.Scheme == Uri.UriSchemeHttps
+        && string.Equals(u.Host, AllowedHost, StringComparison.OrdinalIgnoreCase);
+
     /// <param name="headers">Device headers (<c>x-hwid</c> and friends) for panels that bind keys to devices.</param>
     public static async Task<SubscriptionResult> FetchAsync(HttpClient http, string url, IReadOnlyDictionary<string, string> headers)
     {
+        if (!IsAllowed(url)) throw new InvalidOperationException(NotAllowed);
         using var request = new HttpRequestMessage(HttpMethod.Get, url);
         request.Headers.TryAddWithoutValidation("User-Agent", UserAgent);
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));

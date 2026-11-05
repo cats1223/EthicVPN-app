@@ -61,6 +61,7 @@
     <string name="sites_proxy">Always via VPN</string>
     <string name="sites_direct_hint">These sites open without the VPN, from your usual address. Subdomains too.</string>
     <string name="sites_proxy_hint">These sites go through the VPN even if they are Russian. Subdomains too.</string>
+    <string name="msg_only_subscription">Only EthicVPN subscription links are accepted — https://ethicvpn.duckdns.org/…</string>
     <string name="msg_invalid_key">Could not recognize the key</string>
     <string name="msg_subscription_updated">Subscription updated</string>
     <string name="msg_subscription_error">Subscription error: %1$s</string>

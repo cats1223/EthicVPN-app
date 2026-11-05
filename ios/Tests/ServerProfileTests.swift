@@ -288,4 +288,9 @@ final class ServerProfileTests: XCTestCase {
         XCTAssertEqual(state.profiles.map(\.id), ["b"])
         XCTAssertEqual(state.subscriptionURL, "https://s")
     }
+
+    func testAcceptsOnlyEthicSubscriptions() {
+        for u in ["https://ethicvpn.duckdns.org:50070/POhEz/abc", "https://EthicVPN.duckdns.org/sub", "https://ethicvpn.duckdns.org"] { XCTAssertTrue(Subscription.isAllowed(u), u) }
+        for u in ["http://ethicvpn.duckdns.org:50070/x", "https://ethicvpn.duckdns.org.evil.com/x", "https://evil.com/?ethicvpn.duckdns.org", "https://ethicpanel.duckdns.org/x", "vless://id@ethicvpn.duckdns.org:443#x", "https://x@evil.com"] { XCTAssertFalse(Subscription.isAllowed(u), u) }
+    }
 }

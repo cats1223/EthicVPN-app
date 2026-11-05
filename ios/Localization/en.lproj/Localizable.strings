@@ -212,3 +212,5 @@
 "В подписке достигнут лимит устройств. Попросите администратора освободить место для этого устройства" = "The subscription has reached its device limit. Ask the administrator to free a place for this device";
 "По ссылке открывается страница, а не подписка. Попросите ссылку подписки ещё раз" = "The link opens a web page, not a subscription. Ask for the subscription link again";
 "Панель не получила идентификатор устройства" = "The panel did not get the device ID";
+
+"Принимаются только ссылки подписки EthicVPN — https://ethicvpn.duckdns.org/…" = "Only EthicVPN subscription links are accepted — https://ethicvpn.duckdns.org/…";

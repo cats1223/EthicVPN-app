@@ -150,7 +150,7 @@ final class AppModel: ObservableObject {
         }
     }
 
-    /// Accepts a vless:// or trojan:// key, several keys, or a subscription URL.
+    /// Accepts an EthicVPN subscription link only (closed service: no single keys, no other panels).
     func addInput(_ text: String) async {
         if DeepLink.wantsClipboard(text) {
             // Opened by the bot's "copy the link, then open" page: offer what was copied.
@@ -158,22 +158,12 @@ final class AppModel: ObservableObject {
             return
         }
         let input = DeepLink.unwrap(text)
-        let lower = input.lowercased()
-        if lower.hasPrefix("https://") || lower.hasPrefix("http://") {
-            update { $0.subscriptionURL = input }
-            await refreshSubscription(silent: false)
+        guard Subscription.isAllowed(input) else {
+            message = String(localized: "Принимаются только ссылки подписки EthicVPN — https://ethicvpn.duckdns.org/…")
             return
         }
-        let parsed = Subscription.parseLinks(input)
-        guard !parsed.isEmpty else {
-            message = String(localized: "Не удалось распознать ключ")
-            return
-        }
-        update { s in
-            s.profiles += parsed.map { StoredProfile(profile: $0, fromSubscription: false) }
-            if s.selectedId == nil { s.selectedId = parsed.first?.id }
-        }
-        message = String(localized: "Добавлено серверов: \(parsed.count)")
+        update { $0.subscriptionURL = input }
+        await refreshSubscription(silent: false)
     }
 
     /// Offers to add what is in the clipboard: always after the bot's link (`force`), otherwise
