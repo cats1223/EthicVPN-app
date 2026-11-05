@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Rebuilds geodata/geoip.dat and geodata/geosite.dat: the Russian IP ranges and sites that
-the apps send past the VPN ("Российские сайты напрямую").
+the apps send past the VPN ("Российские сайты напрямую") and the ad and tracker domains they
+block ("Блокировать рекламу").
 
 The full v2fly files are ~25 MB, too much for the 50 MB iOS tunnel, so only the needed
 entries are kept. The .dat files are protobuf lists (GeoIPList / GeoSiteList) whose entries
@@ -16,7 +17,7 @@ from pathlib import Path
 GEOIP_URL = "https://github.com/v2fly/geoip/releases/latest/download/geoip.dat"
 GEOSITE_URL = "https://github.com/v2fly/domain-list-community/releases/latest/download/dlc.dat"
 GEOIP_TAGS = {"RU"}
-GEOSITE_TAGS = {"CATEGORY-RU"}
+GEOSITE_TAGS = {"CATEGORY-RU", "CATEGORY-ADS-ALL"}
 OUT = Path(__file__).resolve().parent.parent / "geodata"
 
 

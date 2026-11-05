@@ -1,3 +1,9 @@
 .build/
 .DS_Store
 __pycache__/
+
+# Windows app: build output and MapLibre (downloaded by CI)
+windows/**/bin/
+windows/**/obj/
+windows/EthicVPN/Web/vendor/
+windows/MicrosoftEdgeWebview2Setup.exe

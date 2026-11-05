@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Switch on: green track, white knob on the right. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle"><corners android:radius="15dp" /><solid android:color="#2BD98B" /></shape>
+    </item>
+    <item android:width="24dp" android:height="24dp" android:gravity="end|center_vertical" android:end="3dp">
+        <shape android:shape="oval"><solid android:color="#FFFFFF" /></shape>
+    </item>
+</layer-list>

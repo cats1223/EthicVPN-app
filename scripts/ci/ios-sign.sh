@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Signs and exports TechTeamVPN.ipa on a macOS runner from repository secrets:
+# Signs and exports EthicVPN.ipa on a macOS runner from repository secrets:
 #   IOS_P12_BASE64             signing certificate (.p12), base64
 #   IOS_P12_PASSWORD           its password (may be empty)
 #   IOS_PROFILE_APP_BASE64     .mobileprovision for the app, base64
 #   IOS_PROFILE_TUNNEL_BASE64  .mobileprovision for the PacketTunnel extension, base64
 # Bundle ids, team and App Group are taken from the profiles, so any explicit App IDs work.
-# Run from ios/ after xcodegen. Output: build/TechTeamVPN.ipa
+# Run from ios/ after xcodegen. Output: build/EthicVPN.ipa
 set -euo pipefail
 
 : "${IOS_P12_BASE64:?}" "${IOS_PROFILE_APP_BASE64:?}" "${IOS_PROFILE_TUNNEL_BASE64:?}"
@@ -65,8 +65,8 @@ fi
 echo "Team $TEAM, app $APP_ID, tunnel $TUNNEL_ID, group $GROUP, export $METHOD"
 
 # --- archive and export
-xcodebuild archive -project TechTeamVPN.xcodeproj -scheme TechTeamVPN \
-    -destination 'generic/platform=iOS' -archivePath build/TechTeamVPN-signed.xcarchive \
+xcodebuild archive -project EthicVPN.xcodeproj -scheme EthicVPN \
+    -destination 'generic/platform=iOS' -archivePath build/EthicVPN-signed.xcarchive \
     OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN" \
     CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="$IDENTITY" DEVELOPMENT_TEAM="$TEAM" \
     APP_BUNDLE_ID="$APP_ID" TUNNEL_BUNDLE_ID="$TUNNEL_ID" APP_GROUP_ID="$GROUP" \
@@ -90,8 +90,8 @@ cat > "$WORK/export.plist" <<PLIST
 </dict>
 </plist>
 PLIST
-xcodebuild -exportArchive -archivePath build/TechTeamVPN-signed.xcarchive \
+xcodebuild -exportArchive -archivePath build/EthicVPN-signed.xcarchive \
     -exportOptionsPlist "$WORK/export.plist" -exportPath build/signed
-mv build/signed/*.ipa build/TechTeamVPN.ipa
+mv build/signed/*.ipa build/EthicVPN.ipa
 security delete-keychain "$KEYCHAIN"
-echo "-> ios/build/TechTeamVPN.ipa ($METHOD)"
+echo "-> ios/build/EthicVPN.ipa ($METHOD)"

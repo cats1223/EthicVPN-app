@@ -3,7 +3,8 @@ import Foundation
 import FoundationNetworking
 #endif
 
-/// Where an IP address is, from ipwho.is: the phone's own address before the VPN, the server's after.
+/// Where an IP address is: the phone's own address before the VPN, the server's after. Asks
+/// ipwho.is and falls back to ipapi.co, since a service may refuse requests from a VPN server.
 enum GeoIP {
     struct Location: Equatable {
         var ip: String
@@ -21,19 +22,23 @@ enum GeoIP {
         }
     }
 
-    /// `ip` nil asks about the address the request comes from.
-    static func url(_ ip: String?) -> URL {
-        URL(string: "https://ipwho.is/" + (ip ?? ""))!
+    /// Lookup services in the order they are tried; `ip` nil asks about the caller's address.
+    static func urls(_ ip: String?) -> [URL] {
+        [
+            URL(string: "https://ipwho.is/" + (ip ?? ""))!,
+            URL(string: "https://ipapi.co/" + (ip.map { $0 + "/" } ?? "") + "json/")!,
+        ]
     }
 
+    /// Reads an ipwho.is or ipapi.co answer; nil for an error or a page that is not JSON.
     static func parse(_ data: Data) -> Location? {
         guard let o = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-              o["success"] as? Bool == true,
+              o["success"] as? Bool != false, o["error"] as? Bool != true,
               let lat = (o["latitude"] as? NSNumber)?.doubleValue,
               let lon = (o["longitude"] as? NSNumber)?.doubleValue else { return nil }
         return Location(
             ip: o["ip"] as? String ?? "",
-            country: o["country"] as? String ?? "",
+            country: o["country_name"] as? String ?? o["country"] as? String ?? "",
             countryCode: o["country_code"] as? String ?? "",
             city: o["city"] as? String ?? "",
             latitude: lat,
@@ -52,7 +57,11 @@ enum GeoIP {
     static func lookup(_ ip: String? = nil) async -> Location? {
         let session = URLSession(configuration: .ephemeral)
         defer { session.finishTasksAndInvalidate() }
-        guard let (data, _) = try? await session.data(for: URLRequest(url: url(ip), timeoutInterval: 8)) else { return nil }
-        return parse(data)
+        for url in urls(ip) {
+            var request = URLRequest(url: url, timeoutInterval: 8)
+            request.setValue("EthicVPN", forHTTPHeaderField: "User-Agent")
+            if let (data, _) = try? await session.data(for: request), let location = parse(data) { return location }
+        }
+        return nil
     }
 }

@@ -1,11 +1,10 @@
 name: Build
 
+# Builds only when asked: a manual run (with a version it also publishes the release) or a v* tag.
+# Pushes do not build, so a release does not wait behind test builds.
 on:
   push:
-    branches: [main, "feature/**"]
-    # A v* tag also publishes a GitHub release with the .apk and .ipa (see the release job).
     tags: ["v*"]
-  pull_request:
   workflow_dispatch:
     inputs:
       version:
@@ -29,8 +28,11 @@ jobs:
       - name: Signing key
         run: |
           if [ -n "$ANDROID_KEYSTORE_BASE64" ]; then
-            mkdir -p ~/.android
-            echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > ~/.android/debug.keystore
+            KEYSTORE="$RUNNER_TEMP/ethicvpn.keystore"
+            echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$KEYSTORE"
+            # Fails here if the secret is not the expected keystore; the fingerprint is public.
+            keytool -list -keystore "$KEYSTORE" -storepass android -alias androiddebugkey | grep -i "SHA-256"
+            echo "ANDROID_KEYSTORE_PATH=$KEYSTORE" >> "$GITHUB_ENV"
           else
             echo "::warning::ANDROID_KEYSTORE_BASE64 is not set: this APK will not install over earlier ones"
           fi
@@ -51,7 +53,7 @@ jobs:
         run: ./gradlew --no-daemon testDebugUnitTest assembleDebug
       - uses: actions/upload-artifact@v4
         with:
-          name: TechTeamVPN-android
+          name: EthicVPN-android
           path: android/app/build/outputs/apk/debug/*.apk
 
   ios:
@@ -79,33 +81,38 @@ jobs:
       - name: Archive (unsigned)
         working-directory: ios
         run: |
-          xcodebuild archive -project TechTeamVPN.xcodeproj -scheme TechTeamVPN \
-            -destination 'generic/platform=iOS' -archivePath build/TechTeamVPN.xcarchive \
+          xcodebuild archive -project EthicVPN.xcodeproj -scheme EthicVPN \
+            -destination 'generic/platform=iOS' -archivePath build/EthicVPN.xcarchive \
             CODE_SIGNING_ALLOWED=NO CURRENT_PROJECT_VERSION=${{ github.run_number }} \
             ${APP_VERSION:+MARKETING_VERSION=${APP_VERSION%%-*} APP_DISPLAY_VERSION=$APP_VERSION}
           mkdir -p build/Payload
-          cp -R build/TechTeamVPN.xcarchive/Products/Applications/TechTeamVPN.app build/Payload/
-          (cd build && zip -qry TechTeamVPN-unsigned.ipa Payload)
+          cp -R build/EthicVPN.xcarchive/Products/Applications/EthicVPN.app build/Payload/
+          (cd build && zip -qry EthicVPN-unsigned.ipa Payload)
       - uses: actions/upload-artifact@v4
         with:
-          name: TechTeamVPN-ios-unsigned
-          path: ios/build/TechTeamVPN-unsigned.ipa
+          name: EthicVPN-ios-unsigned
+          path: ios/build/EthicVPN-unsigned.ipa
+      # The profiles in the secrets are made for one bundle id; a mismatch must not stop the release.
       - name: Signed IPA
+        id: signed
         if: env.IOS_P12_BASE64 != ''
+        continue-on-error: true
         working-directory: ios
         run: ../scripts/ci/ios-sign.sh
       - uses: actions/upload-artifact@v4
-        if: env.IOS_P12_BASE64 != ''
+        if: steps.signed.outcome == 'success'
         with:
-          name: TechTeamVPN-ios-signed
-          path: ios/build/TechTeamVPN.ipa
+          name: EthicVPN-ios-signed
+          path: ios/build/EthicVPN.ipa
+      # The shared logic is unit-tested on Android too; the simulator run is skipped for releases to save time.
       - name: Unit tests
+        if: env.RELEASE_TAG == ''
         working-directory: ios
         run: |
           # Simulator names change with each Xcode, so take the first available iPhone.
           DEVICE=$(xcrun simctl list devices available | grep -m1 -oE 'iPhone [^(]+' | sed 's/ *$//')
           echo "Testing on $DEVICE"
-          xcodebuild test -project TechTeamVPN.xcodeproj -scheme TechTeamVPN \
+          xcodebuild test -project EthicVPN.xcodeproj -scheme EthicVPN \
             -destination "platform=iOS Simulator,name=$DEVICE" CODE_SIGNING_ALLOWED=NO
 
   release:
@@ -124,27 +131,27 @@ jobs:
           sparse-checkout-cone-mode: false
       - uses: actions/download-artifact@v4
         with:
-          name: TechTeamVPN-android
+          name: EthicVPN-android
           path: android
       - uses: actions/download-artifact@v4
         with:
-          name: TechTeamVPN-ios-unsigned
+          name: EthicVPN-ios-unsigned
           path: ios
       - name: Name the files
         run: |
-          cp android/app-universal-debug.apk "TechTeamVPN-${TAG}.apk"
-          cp ios/TechTeamVPN-unsigned.ipa "TechTeamVPN-${TAG}-unsigned.ipa"
+          cp android/app-universal-debug.apk "EthicVPN-${TAG}.apk"
+          cp ios/EthicVPN-unsigned.ipa "EthicVPN-${TAG}-unsigned.ipa"
       # A tag with a suffix (v1.2.0-beta.1) is a beta: published as a pre-release, which the apps'
       # update check never sees, since it asks GitHub for the latest full release.
       - name: Beta or release
         run: |
           if [[ "$TAG" == *-* ]]; then
             echo "PRERELEASE=true" >> "$GITHUB_ENV"
-            echo "TITLE=TechTeamVPN ${TAG} (бета)" >> "$GITHUB_ENV"
+            echo "TITLE=EthicVPN ${TAG} (бета)" >> "$GITHUB_ENV"
             echo "NOTE=**Бета-версия** для проверки. Приложение не предлагает её как обновление; когда выйдет релиз, бета сама предложит обновиться." >> "$GITHUB_ENV"
           else
             echo "PRERELEASE=false" >> "$GITHUB_ENV"
-            echo "TITLE=TechTeamVPN ${TAG}" >> "$GITHUB_ENV"
+            echo "TITLE=EthicVPN ${TAG}" >> "$GITHUB_ENV"
             echo "NOTE=" >> "$GITHUB_ENV"
           fi
       # The "## <tag>" section of CHANGELOG.md, then how to install.
@@ -156,8 +163,8 @@ jobs:
             awk -v tag="## ${TAG}" '$0 == tag {on=1; next} /^## / {on=0} on' CHANGELOG.md | sed '/./,$!d'
             echo
             echo "### Установка"
-            echo "- **Android:** \`TechTeamVPN-${TAG}.apk\` — установите файл на телефон (Android 8+)."
-            echo "- **iOS:** \`TechTeamVPN-${TAG}-unsigned.ipa\` — неподписанный, подпишите своим сертификатом (нужны Network Extensions → Packet Tunnel)."
+            echo "- **Android:** \`EthicVPN-${TAG}.apk\` — установите файл на телефон (Android 8+)."
+            echo "- **iOS:** \`EthicVPN-${TAG}-unsigned.ipa\` — неподписанный, подпишите своим сертификатом (нужны Network Extensions → Packet Tunnel)."
           } > notes.md
           if ! grep -qx "## ${TAG}" CHANGELOG.md; then echo "::warning::CHANGELOG.md has no section for ${TAG}"; fi
           cat notes.md
@@ -168,6 +175,6 @@ jobs:
           name: ${{ env.TITLE }}
           prerelease: ${{ env.PRERELEASE == 'true' }}
           files: |
-            TechTeamVPN-${{ env.TAG }}.apk
-            TechTeamVPN-${{ env.TAG }}-unsigned.ipa
+            EthicVPN-${{ env.TAG }}.apk
+            EthicVPN-${{ env.TAG }}-unsigned.ipa
           body_path: notes.md

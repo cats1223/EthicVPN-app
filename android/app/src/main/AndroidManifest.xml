@@ -27,7 +27,7 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.TechTeamVPN">
+        android:theme="@style/Theme.EthicVPN">
 
         <activity
             android:name=".ui.MainActivity"
@@ -38,19 +38,20 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <!-- Opening a vless:// link imports the key. -->
+            <!-- Opening a server link imports the key. -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="vless" />
+                <data android:scheme="trojan" />
             </intent-filter>
-            <!-- techteamvpn://add?url=... from the Telegram bot imports a subscription. -->
+            <!-- ethicvpn://add?url=... from the Telegram bot imports a subscription. -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="techteamvpn" />
+                <data android:scheme="ethicvpn" />
             </intent-filter>
         </activity>
 
@@ -59,6 +60,34 @@
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="fullSensor"
             tools:replace="screenOrientation" />
+
+        <receiver
+            android:name=".vpn.VpnWidget$Wide"
+            android:exported="true"
+            android:label="@string/widget_wide_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_wide_info" />
+        </receiver>
+
+        <receiver
+            android:name=".vpn.VpnWidget$Small"
+            android:exported="true"
+            android:label="@string/widget_small_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_small_info" />
+        </receiver>
+
+        <receiver
+            android:name=".data.ExpiryReminders$Receiver"
+            android:exported="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -71,7 +100,7 @@
         </provider>
 
         <service
-            android:name=".vpn.TechTeamVpnService"
+            android:name=".vpn.EthicVpnService"
             android:exported="false"
             android:foregroundServiceType="specialUse"
             android:permission="android.permission.BIND_VPN_SERVICE">

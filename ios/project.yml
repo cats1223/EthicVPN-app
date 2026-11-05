@@ -1,7 +1,7 @@
 # Generate the Xcode project with XcodeGen:  brew install xcodegen && xcodegen
-name: TechTeamVPN
+name: EthicVPN
 options:
-  bundleIdPrefix: com.techteam
+  bundleIdPrefix: com.ethic
   deploymentTarget:
     iOS: "16.0"
   developmentLanguage: ru
@@ -15,27 +15,34 @@ settings:
     APP_DISPLAY_VERSION: $(MARKETING_VERSION)
     CURRENT_PROJECT_VERSION: "1"
     # CI overrides these from the provisioning profiles (scripts/ci/ios-sign.sh).
-    APP_BUNDLE_ID: com.techteam.vpn
+    APP_BUNDLE_ID: com.ethic.vpn
     TUNNEL_BUNDLE_ID: $(APP_BUNDLE_ID).tunnel
-    APP_GROUP_ID: group.com.techteam.vpn
+    APP_GROUP_ID: group.com.ethic.vpn
 
 targets:
-  TechTeamVPN:
+  EthicVPN:
     type: application
     platform: iOS
     sources:
-      - TechTeamVPN
+      - EthicVPN
       - Shared
+      - Intents
+      - Localization
+      # Shown as "what's new" after an update.
+      - path: ../CHANGELOG.md
+        buildPhase: resources
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: $(APP_BUNDLE_ID)
         PROVISIONING_PROFILE_SPECIFIER: $(APP_PROFILE)
-        INFOPLIST_FILE: TechTeamVPN/Info.plist
-        CODE_SIGN_ENTITLEMENTS: TechTeamVPN/TechTeamVPN.entitlements
+        INFOPLIST_FILE: EthicVPN/Info.plist
+        CODE_SIGN_ENTITLEMENTS: EthicVPN/EthicVPN.entitlements
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         TARGETED_DEVICE_FAMILY: "1,2"
     dependencies:
       - target: PacketTunnel
+        embed: true
+      - target: EthicWidget
         embed: true
 
   PacketTunnel:
@@ -44,6 +51,7 @@ targets:
     sources:
       - PacketTunnel
       - Shared
+      - Localization
       # Russian IP ranges and sites for split tunneling (scripts/update-geodata.py), copied as a folder.
       - path: ../geodata
         type: folder
@@ -62,7 +70,26 @@ targets:
         embed: false
       - sdk: NetworkExtension.framework
 
-  TechTeamVPNTests:
+  # Home screen widget. Interactive widgets need iOS 17; the toggle's
+  # intent runs in the app, so the extension needs no VPN entitlement or App Group.
+  EthicWidget:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - Widget
+      - Intents
+      - Localization
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(APP_BUNDLE_ID).widget
+        INFOPLIST_FILE: Widget/Info.plist
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: $(inherited) WIDGET
+    dependencies:
+      - sdk: WidgetKit.framework
+      - sdk: SwiftUI.framework
+
+  EthicVPNTests:
     type: bundle.unit-test
     platform: iOS
     sources:
@@ -73,10 +100,10 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
 
 schemes:
-  TechTeamVPN:
+  EthicVPN:
     build:
       targets:
-        TechTeamVPN: all
+        EthicVPN: all
     test:
       targets:
-        - TechTeamVPNTests
+        - EthicVPNTests

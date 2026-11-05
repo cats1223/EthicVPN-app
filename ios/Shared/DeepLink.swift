@@ -1,13 +1,13 @@
 import Foundation
 
-/// techteamvpn:// links that a Telegram bot opens (through the redirect page in server/link-page):
-///   techteamvpn://add?url=<url-encoded subscription or vless:// key>
-///   techteamvpn://add/<subscription or key>
-///   techteamvpn://add  — no link: take it from the clipboard (the bot's "copy, then open" flow)
+/// ethicvpn:// links that a Telegram bot opens (through the redirect page in server/link-page):
+///   ethicvpn://add?url=<url-encoded subscription or vless:// key>
+///   ethicvpn://add/<subscription or key>
+///   ethicvpn://add  — no link: take it from the clipboard (the bot's "copy, then open" flow)
 enum DeepLink {
-    static let scheme = "techteamvpn"
+    static let scheme = "ethicvpn"
 
-    /// True for techteamvpn://add without a link: the subscription is waiting in the clipboard.
+    /// True for ethicvpn://add without a link: the subscription is waiting in the clipboard.
     static func wantsClipboard(_ link: String) -> Bool {
         link.trimmingCharacters(in: .whitespacesAndNewlines).lowercased().hasPrefix("\(scheme)://add") && unwrap(link).isEmpty
     }

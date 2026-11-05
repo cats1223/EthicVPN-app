@@ -11,6 +11,11 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
     private var notes: [String] = []
     private var diagnoseTask: Task<Void, Never>?
     private var memoryTask: Task<Void, Never>?
+    private var trafficTask: Task<Void, Never>?
+    private var lastCounters: (rx: UInt32, tx: UInt32)?
+    /// Xray's access log while ad blocking is on; read and emptied with each traffic save.
+    private var accessLogURL: URL?
+    private static let historyKey = "trafficHistory"
 
     private static func writableLogURL() -> URL {
         let candidates = [AppGroup.logURL, FileManager.default.temporaryDirectory.appendingPathComponent("xray.log")]
@@ -41,40 +46,86 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
         // crash, on demand) it comes from the saved configuration.
         let providerConfig = (protocolConfiguration as? NETunnelProviderProtocol)?.providerConfiguration
         let link = options?["link"] as? String ?? providerConfig?["link"] as? String
-        guard let profile = link.flatMap(VlessProfile.parse) ?? ProfileStore.load().selected else {
+        guard let profile = link.flatMap(ServerProfile.parse) ?? ProfileStore.load().selected else {
             throw TunnelError.noServer
         }
 
         captureCrashOutput()
-        appendLog("TechTeamVPN: \(profile.summary)\(options == nil ? " (перезапуск системой)" : "")")
-        appendLog("TechTeamVPN: log \(logURL.path), App Group \(AppGroup.logURL == nil ? "нет в профиле подписи" : "есть")")
+        appendLog("EthicVPN: \(profile.summary)\(options == nil ? " (перезапуск системой)" : "")")
+        appendLog("EthicVPN: log \(logURL.path), App Group \(AppGroup.logURL == nil ? "нет в профиле подписи" : "есть")")
         do {
             try await setTunnelNetworkSettings(networkSettings(for: profile))
             guard let fd = tunnelFileDescriptor else { throw TunnelError.noTunDescriptor }
-            appendLog("TechTeamVPN: utun fd \(fd), starting Xray")
+            appendLog("EthicVPN: utun fd \(fd), starting Xray")
             let verbose = options?["verbose"] as? String == "1" || options?["diagnose"] as? String == "1"
                 || (options == nil && providerConfig?["verbose"] as? Bool == true)
             let russiaDirect = providerConfig?["russiaDirect"] as? Bool ?? true
+            let blockAds = providerConfig?["blockAds"] as? Bool ?? false
+            let access = blockAds ? FileManager.default.temporaryDirectory.appendingPathComponent("access.log") : nil
+            if let access { FileManager.default.createFile(atPath: access.path, contents: Data()) }
+            accessLogURL = access
+            let dns = XrayConfig.upstreamDNS(
+                choice: providerConfig?["dns"] as? String ?? "", custom: providerConfig?["customDNS"] as? String ?? ""
+            )
             // geoip.dat and geosite.dat are bundled with the extension (geodata/ in project.yml).
             let assetDir = Bundle.main.resourceURL?.appendingPathComponent("geodata").path
-            appendLog("TechTeamVPN: russian sites direct \(russiaDirect ? "on" : "off")")
+            appendLog("EthicVPN: russian sites direct \(russiaDirect ? "on" : "off"), ads \(blockAds ? "blocked" : "allowed")")
             let config = try XrayConfig.build(
-                profile, tunFd: fd, logPath: verbose ? logURL.path : nil, russiaDirect: russiaDirect, assetDir: assetDir
+                profile, tunFd: fd, logPath: verbose ? logURL.path : nil, russiaDirect: russiaDirect, assetDir: assetDir,
+                directSites: providerConfig?["directSites"] as? [String] ?? [],
+                proxySites: providerConfig?["proxySites"] as? [String] ?? [],
+                blockAds: blockAds, dns: dns, accessLogPath: access?.path
             )
             try XrayCore.run(config)
-            appendLog("TechTeamVPN: Xray started, memory \(Self.memoryMB()) MB")
+            appendLog("EthicVPN: Xray started, memory \(Self.memoryMB()) MB")
             log.info("Xray started for \(profile.name, privacy: .public)")
             if options?["diagnose"] as? String == "1" { scheduleDiagnosticStop() } else { watchMemory() }
+            countTraffic()
         } catch {
-            appendLog("TechTeamVPN: start failed: \(error.localizedDescription)")
+            appendLog("EthicVPN: start failed: \(error.localizedDescription)")
             throw error
         }
     }
 
-    /// The app sends "log" and gets the last 64 KB of the log back.
+    /// The app sends "log" and gets the last 64 KB of the log back, or "stats" and gets the
+    /// traffic history (TrafficHistory as JSON).
     override func handleAppMessage(_ messageData: Data) async -> Data? {
-        guard String(decoding: messageData, as: UTF8.self) == "log" else { return nil }
-        return Data(report(limit: 65_536).utf8)
+        switch String(decoding: messageData, as: UTF8.self) {
+        case "log": return Data(report(limit: 65_536).utf8)
+        case "stats":
+            saveTraffic()
+            return UserDefaults.standard.data(forKey: Self.historyKey) ?? TrafficHistory().data
+        default: return nil
+        }
+    }
+
+    /// Adds the tunnel's traffic to the per-day history every 10 s.
+    private func countTraffic() {
+        lastCounters = TunnelCounters.read()
+        trafficTask = Task { [weak self] in
+            while !Task.isCancelled {
+                try? await Task.sleep(nanoseconds: 10_000_000_000)
+                self?.saveTraffic()
+            }
+        }
+    }
+
+    private func saveTraffic() {
+        let defaults = UserDefaults.standard
+        var history = defaults.data(forKey: Self.historyKey).flatMap(TrafficHistory.init(data:)) ?? TrafficHistory()
+        if let now = TunnelCounters.read() {
+            // The counters are 32-bit and wrap around at 4 GB; unsigned subtraction handles that.
+            if let last = lastCounters { history.add(down: Int64(now.rx &- last.rx), up: Int64(now.tx &- last.tx)) }
+            lastCounters = now
+        }
+        // Xray appends to the file, so emptying it after reading loses nothing that matters.
+        if let url = accessLogURL, let handle = try? FileHandle(forUpdating: url) {
+            let data = handle.readDataToEndOfFile()
+            try? handle.truncate(atOffset: 0)
+            try? handle.close()
+            history.addBlocked(XrayConfig.countBlocked(String(decoding: data, as: UTF8.self)))
+        }
+        defaults.set(history.data, forKey: Self.historyKey)
     }
 
     /// A memory line every 30 s: iOS kills a packet tunnel near 50 MB without a word, so the trend
@@ -84,7 +135,7 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
             while !Task.isCancelled {
                 try? await Task.sleep(nanoseconds: 30_000_000_000)
                 guard let self else { return }
-                self.appendLog("TechTeamVPN: memory \(Self.memoryMB()) MB")
+                self.appendLog("EthicVPN: memory \(Self.memoryMB()) MB")
                 if self.notes.count > 200 { self.notes.removeFirst(self.notes.count - 200) }
             }
         }
@@ -96,10 +147,10 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
         diagnoseTask = Task { [weak self] in
             for second in stride(from: 5, through: 20, by: 5) {
                 try? await Task.sleep(nanoseconds: 5_000_000_000)
-                self?.appendLog("TechTeamVPN: \(second) s, memory \(Self.memoryMB()) MB")
+                self?.appendLog("EthicVPN: \(second) s, memory \(Self.memoryMB()) MB")
             }
             guard let self else { return }
-            let error = NSError(domain: "TechTeamVPN", code: 1, userInfo: [NSLocalizedDescriptionKey: self.report(limit: 8000)])
+            let error = NSError(domain: "EthicVPN", code: 1, userInfo: [NSLocalizedDescriptionKey: self.report(limit: 8000)])
             self.cancelTunnelWithError(error)
         }
     }
@@ -154,16 +205,21 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
     override func stopTunnel(with reason: NEProviderStopReason) async {
         diagnoseTask?.cancel()
         memoryTask?.cancel()
+        trafficTask?.cancel()
+        saveTraffic()
         log.info("stopping tunnel, reason \(reason.rawValue)")
         XrayCore.stop()
     }
 
-    private func networkSettings(for profile: VlessProfile) -> NEPacketTunnelNetworkSettings {
-        let settings = NEPacketTunnelNetworkSettings(tunnelRemoteAddress: profile.address)
+    private func networkSettings(for profile: ServerProfile) -> NEPacketTunnelNetworkSettings {
+        let settings = NEPacketTunnelNetworkSettings(tunnelRemoteAddress: Self.remoteIP(for: profile.address))
         settings.mtu = NSNumber(value: XrayConfig.tunMTU)
 
         let ipv4 = NEIPv4Settings(addresses: ["172.19.0.1"], subnetMasks: ["255.255.255.252"])
         ipv4.includedRoutes = [NEIPv4Route.default()]
+        // The home network stays outside the tunnel: a PC, printer or console on Wi-Fi is reachable.
+        ipv4.excludedRoutes = [("10.0.0.0", "255.0.0.0"), ("169.254.0.0", "255.255.0.0"), ("192.168.0.0", "255.255.0.0")]
+            .map { NEIPv4Route(destinationAddress: $0.0, subnetMask: $0.1) }
         settings.ipv4Settings = ipv4
 
         let ipv6 = NEIPv6Settings(addresses: ["fdfe:dcba:9876::1"], networkPrefixLengths: [126])
@@ -174,6 +230,33 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
         dns.matchDomains = [""]
         settings.dnsSettings = dns
         return settings
+    }
+
+    /// iOS rejects the tunnel settings when tunnelRemoteAddress is a host name ("Invalid
+    /// NETunnelNetworkSettings tunnelRemoteAddress"), and panels now put a domain in the link.
+    /// The field is informational (the extension's own sockets bypass the tunnel), so an IP
+    /// literal is passed through, a name is resolved, and a placeholder is used if that fails.
+    static func remoteIP(for host: String) -> String {
+        let bare = host.trimmingCharacters(in: CharacterSet(charactersIn: "[]"))
+        var v4 = in_addr(), v6 = in6_addr()
+        if inet_pton(AF_INET, bare, &v4) == 1 || inet_pton(AF_INET6, bare, &v6) == 1 { return bare }
+        var hints = addrinfo(ai_flags: 0, ai_family: AF_UNSPEC, ai_socktype: SOCK_STREAM,
+                             ai_protocol: 0, ai_addrlen: 0, ai_canonname: nil, ai_addr: nil, ai_next: nil)
+        var result: UnsafeMutablePointer<addrinfo>?
+        guard getaddrinfo(bare, nil, &hints, &result) == 0, let first = result else { return "127.0.0.1" }
+        defer { freeaddrinfo(result) }
+        var fallback: String?
+        var node: UnsafeMutablePointer<addrinfo>? = first
+        while let ai = node {
+            var buf = [CChar](repeating: 0, count: Int(NI_MAXHOST))
+            if getnameinfo(ai.pointee.ai_addr, ai.pointee.ai_addrlen, &buf, socklen_t(buf.count), nil, 0, NI_NUMERICHOST) == 0 {
+                let ip = String(cString: buf)
+                if ai.pointee.ai_family == AF_INET { return ip }
+                fallback = fallback ?? ip
+            }
+            node = ai.pointee.ai_next
+        }
+        return fallback ?? "127.0.0.1"
     }
 
     /// NetworkExtension does not expose the utun descriptor, so find the open socket whose
@@ -198,8 +281,8 @@ enum TunnelError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .noServer: return "Сервер не выбран"
-        case .noTunDescriptor: return "Не удалось получить дескриптор туннеля"
+        case .noServer: return String(localized: "Сервер не выбран")
+        case .noTunDescriptor: return String(localized: "Не удалось получить дескриптор туннеля")
         case .xray(let message): return message
         }
     }

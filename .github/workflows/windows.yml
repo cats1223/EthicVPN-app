@@ -1,0 +1,128 @@
+name: Windows
+
+# The Windows app (windows/) builds and ships on its own, with its own versions and tags
+# (windows-v1.0.0), separately from the phone apps' releases. A push to the windows-release branch
+# builds and publishes the version in windows/VERSION; so does a windows-v* tag, and a manual run
+# once this file is on the default branch.
+on:
+  push:
+    branches: ["windows-release"]
+    tags: ["windows-v*"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Опубликовать релиз Windows с этой версией, например 1.0.0 (пусто — только сборка)"
+        required: false
+        default: ""
+
+env:
+  # The release tag: pushed, or made from the version of a manual run; the release branch takes
+  # windows/VERSION below. Empty for a plain build.
+  TAG: ${{ startsWith(github.ref, 'refs/tags/windows-v') && github.ref_name || (inputs.version && format('windows-v{0}', inputs.version) || '') }}
+
+jobs:
+  windows:
+    # WPF + WebView2 app, with xray.exe, wintun.dll for the tunnel mode and the trimmed geodata.
+    runs-on: windows-latest
+    outputs:
+      setup: ${{ steps.version.outputs.setup }}
+      tag: ${{ steps.version.outputs.tag }}
+      version: ${{ steps.version.outputs.version }}
+    defaults:
+      run:
+        shell: bash
+    env:
+      XRAY_VERSION: v26.10.21
+      WINTUN_VERSION: "0.14.1"
+      MAPLIBRE_VERSION: "5.6.2"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+      - name: Version and zip name
+        id: version
+        run: |
+          if [ "$GITHUB_REF" = "refs/heads/windows-release" ]; then TAG="windows-v$(tr -d ' \r\n' < windows/VERSION)"; fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "TAG=$TAG" >> "$GITHUB_ENV"
+          V="${TAG#windows-v}"
+          echo "version=$V" >> "$GITHUB_OUTPUT"
+          echo "setup=EthicVPN-Setup-${V:-1.0.0}.exe" >> "$GITHUB_OUTPUT"
+          echo "APP_VERSION=${V:-1.0.0}" >> "$GITHUB_ENV"
+          echo "SETUP_NAME=EthicVPN-Setup-${V:-1.0.0}.exe" >> "$GITHUB_ENV"
+      - name: Unit tests
+        run: dotnet test windows/EthicVPN.Core.Tests
+      - name: MapLibre for the globe
+        run: |
+          mkdir -p windows/EthicVPN/Web/vendor
+          curl -sSfL -o windows/EthicVPN/Web/vendor/maplibre-gl.js "https://unpkg.com/maplibre-gl@${MAPLIBRE_VERSION}/dist/maplibre-gl.js"
+          curl -sSfL -o windows/EthicVPN/Web/vendor/maplibre-gl.css "https://unpkg.com/maplibre-gl@${MAPLIBRE_VERSION}/dist/maplibre-gl.css"
+      - name: Publish
+        run: |
+          dotnet publish windows/EthicVPN/EthicVPN.csproj -c Release -r win-x64 --self-contained \
+            -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:AppVersion="$APP_VERSION" -o out
+      - name: Xray, Wintun and geodata
+        shell: pwsh
+        run: |
+          Invoke-WebRequest "https://github.com/XTLS/Xray-core/releases/download/$env:XRAY_VERSION/Xray-windows-64.zip" -OutFile xray.zip
+          Expand-Archive xray.zip -DestinationPath xray
+          Copy-Item xray/xray.exe out/
+          Invoke-WebRequest "https://www.wintun.net/builds/wintun-$env:WINTUN_VERSION.zip" -OutFile wintun.zip
+          Expand-Archive wintun.zip -DestinationPath wintun
+          Copy-Item wintun/wintun/bin/amd64/wintun.dll out/
+          Copy-Item geodata/geoip.dat, geodata/geosite.dat out/
+          Remove-Item out/*.pdb -ErrorAction SilentlyContinue
+          Get-ChildItem out
+      # One setup file: installs per user (no admin), Start menu and desktop shortcuts, uninstaller.
+      - name: Installer
+        shell: pwsh
+        run: |
+          Invoke-WebRequest "https://go.microsoft.com/fwlink/p/?LinkId=2124703" -OutFile windows/MicrosoftEdgeWebview2Setup.exe
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { choco install innosetup -y --no-progress | Out-Null }
+          & $iscc "/DAppVersion=$env:APP_VERSION" "/DSourceDir=$PWD\out" "/O$PWD" windows\installer.iss
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Get-ChildItem *.exe
+      - uses: actions/upload-artifact@v4
+        with:
+          name: EthicVPN-windows
+          path: ${{ env.SETUP_NAME }}
+
+  release:
+    if: needs.windows.outputs.tag != ''
+    needs: [windows]
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ needs.windows.outputs.tag }}
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: CHANGELOG.md
+          sparse-checkout-cone-mode: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: EthicVPN-windows
+      - name: Release notes
+        run: |
+          {
+            echo "### Что нового"
+            awk -v tag="## ${TAG}" '$0 == tag {on=1; next} /^## / {on=0} on' CHANGELOG.md | sed '/./,$!d'
+            echo
+            echo "### Установка"
+            echo "Скачайте и запустите \`${{ needs.windows.outputs.setup }}\` (Windows 10/11, права администратора не нужны)."
+          } > notes.md
+          if ! grep -qx "## ${TAG}" CHANGELOG.md; then echo "::warning::CHANGELOG.md has no section for ${TAG}"; fi
+          cat notes.md
+      # Never "latest": the phone apps ask GitHub for the latest release to find their own updates.
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.TAG }}
+          target_commitish: ${{ github.sha }}
+          name: EthicVPN для Windows ${{ needs.windows.outputs.version }}
+          prerelease: ${{ contains(env.TAG, '-beta') }}
+          make_latest: false
+          files: ${{ needs.windows.outputs.setup }}
+          body_path: notes.md

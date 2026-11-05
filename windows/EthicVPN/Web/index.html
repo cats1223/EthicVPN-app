@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EthicVPN</title>
+  <!-- MapLibre is downloaded into vendor/ by CI (see .github/workflows/build.yml). -->
+  <link rel="stylesheet" href="vendor/maplibre-gl.css">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <div id="map"></div>
+  <div id="labels"></div>
+
+  <div id="pill" class="pill glass"><span class="dot"></span><span class="pill-text">Не подключено</span></div>
+
+  <main id="panel" class="panel glass">
+    <button class="handle" id="handle" aria-label="Развернуть"><span></span></button>
+
+    <section class="status-card" id="statusCard">
+      <div class="status-row">
+        <div class="shield" id="shield"></div>
+        <div class="status-text">
+          <div class="status-title" id="statusTitle">Вы не защищены</div>
+          <div class="status-sub" id="statusSub">Подключитесь к VPN для защиты</div>
+        </div>
+      </div>
+      <div class="traffic" id="traffic" hidden>
+        <span id="down">↓ 0 Б/с</span><span id="up">↑ 0 Б/с</span><span class="grow"></span>
+        <span id="session" class="muted"></span>
+      </div>
+      <button class="big" id="connect">Подключить</button>
+    </section>
+
+    <div id="serversBlock" hidden>
+      <div class="caption">Серверы</div>
+      <div class="chips" id="chips"></div>
+    </div>
+
+    <div class="more" id="more"><div class="more-inner">
+      <section class="card" id="subCard" hidden></section>
+      <nav class="menu">
+        <button data-open="servers"><i data-icon="server"></i>Все серверы<i data-icon="chevron"></i></button>
+        <button data-open="settings"><i data-icon="gear"></i>Настройки<i data-icon="chevron"></i></button>
+      </nav>
+    </div></div>
+  </main>
+
+  <!-- Sheets slide up over the globe, like the phone apps' screens. -->
+  <div id="scrim" hidden></div>
+
+  <section class="sheet" id="sheet-servers" hidden>
+    <header><h2>Серверы</h2><div class="actions">
+      <button class="link" id="serversAdd">Добавить</button><button class="link" id="pingAll">Пинг</button><button class="link" id="refreshSub">Обновить</button><button class="close">Закрыть</button>
+    </div></header>
+    <div class="list" id="serverList"></div>
+    <button class="danger-link" id="removeSub">Удалить подписку</button>
+  </section>
+
+  <section class="sheet" id="sheet-add" hidden>
+    <header><h2>Добавить ключ</h2><div class="actions"><button class="close">Отмена</button></div></header>
+    <p class="hint">Вставьте ключ vless:// или trojan://, несколько ключей или ссылку на подписку.</p>
+    <textarea id="addText" rows="5" placeholder="vless://  trojan://  или  https://…"></textarea>
+    <div class="row-buttons">
+      <button class="secondary" id="paste">Вставить из буфера</button>
+      <button class="big" id="addSave">Сохранить</button>
+    </div>
+  </section>
+
+  <section class="sheet" id="sheet-speed" hidden>
+    <header><h2>Тест скорости</h2><div class="actions"><button class="close">Закрыть</button></div></header>
+    <div class="gauge-wrap"><svg id="gauge" viewBox="0 0 260 260"></svg>
+      <div class="gauge-value"><b id="gaugeValue">0</b><span>Мбит/с</span></div></div>
+    <div class="phase" id="speedPhase">Нажмите «Начать»</div>
+    <div class="results">
+      <div><span>Пинг</span><b id="resPing">—</b><small>мс</small></div>
+      <div><span>Загрузка</span><b id="resDown">—</b><small>Мбит/с</small></div>
+      <div><span>Отдача</span><b id="resUp">—</b><small>Мбит/с</small></div>
+    </div>
+    <button class="big" id="speedStart">Начать</button>
+    <p class="hint center" id="speedVia"></p>
+  </section>
+
+  <section class="sheet tall" id="sheet-settings" hidden>
+    <header><button class="link" id="settingsBack" hidden>‹ Назад</button><h2 id="settingsTitle">Настройки</h2><div class="actions"><button class="close">Закрыть</button></div></header>
+    <div class="settings" id="settings"></div>
+  </section>
+
+  <div id="toast" hidden></div>
+  <div id="splash"><img src="logo.png" alt=""><div>EthicVPN</div></div>
+
+  <script src="vendor/maplibre-gl.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
