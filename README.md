@@ -1,16 +1,17 @@
 <div align="center">
 
-<img src="branding/play-store-icon-512.png" width="128" alt="EthicVPN">
+<img src="branding/play-store-icon-512.png" width="140" alt="EthicVPN">
 
 # EthicVPN
 
-**Быстрый и защищённый VPN для iPhone и Android**
+**Закрытый VPN для iPhone, Android и Windows**
 
 VLESS · REALITY · XHTTP на ядре [Xray-core](https://github.com/XTLS/Xray-core)
 
 [![Релиз](https://img.shields.io/github/v/release/cats1223/EthicVPN-app?label=%D1%80%D0%B5%D0%BB%D0%B8%D0%B7&color=00D1FF)](https://github.com/cats1223/EthicVPN-app/releases/latest)
 ![iOS 16+](https://img.shields.io/badge/iOS-16%2B-7B5CFF)
 ![Android 8+](https://img.shields.io/badge/Android-8%2B-2BD98B)
+![Windows 10+](https://img.shields.io/badge/Windows-10%2B-0078D4)
 [![Сборка](https://img.shields.io/github/actions/workflow/status/cats1223/EthicVPN-app/build.yml?branch=main&label=%D1%81%D0%B1%D0%BE%D1%80%D0%BA%D0%B0)](https://github.com/cats1223/EthicVPN-app/actions)
 
 [**Скачать**](https://github.com/cats1223/EthicVPN-app/releases/latest) · [Добавить подписку](https://cats1223.github.io/EthicVPN-app/)
@@ -23,15 +24,18 @@ VLESS · REALITY · XHTTP на ядре [Xray-core](https://github.com/XTLS/Xray
 
 - 🌍 **Глобус** — показывает, где вы по IP до включения VPN и где вас видят сайты после.
 - 🔌 **Одна кнопка** — подключение, таймер сессии и статус соединения.
-- 🔗 **Подписка в одно касание** — скопируйте ссылку в боте, откройте приложение, и оно само предложит её добавить.
+- 🔗 **Подписка в одно касание** — скопируйте ссылку подписки, откройте приложение, и оно само предложит её добавить.
 - 📷 **Любой способ добавить ключ** — ссылка подписки, ключ `vless://` или `trojan://`, QR-код или ссылка из мессенджера.
 - 📊 **Подписка под рукой** — остаток трафика, срок действия и список серверов с пингом.
 - 🛡 **Протоколы** — VLESS и Trojan (REALITY или TLS; XHTTP, TCP, WebSocket, gRPC, HTTPUpgrade).
 - 🇷🇺 **Раздельное туннелирование** — российские сайты и адреса открываются напрямую; на Android можно выбрать приложения (банки, Госуслуги…), которые работают мимо VPN и не видят его.
 - 🌐 **Без утечек** — DNS идёт через туннель (DNS-over-HTTPS), локальная сеть — напрямую.
 - 🔔 **Проверка обновлений** — приложение само сообщит о новой версии.
-- 🌓 **Тёмная и светлая тема.**
+- 🌓 **Чёрно-белое оформление**, тёмная и светлая тема.
+- 🏠 **Домашняя сеть видна** — ПК, принтер и приставка доступны по Wi-Fi при включённом VPN.
 - 📱 **Android** — плитка в шторке быстрых настроек и «Постоянная VPN».
+- 🍏 **iPhone** — виджеты, Dynamic Island и Siri.
+- 🖥 **Windows** — системный прокси или весь трафик (TUN), значок в трее, автозапуск.
 
 ## Установка
 
@@ -41,10 +45,11 @@ VLESS · REALITY · XHTTP на ядре [Xray-core](https://github.com/XTLS/Xray
 |---|---|---|
 | **Android 8+** | `EthicVPN-vX.Y.Z.apk` | Скачайте и откройте файл, разрешите установку из этого источника. |
 | **iPhone, iOS 16+** | `EthicVPN-vX.Y.Z-unsigned.ipa` | Подпишите своим сертификатом (ESign, Feather, Sideloadly и т. п.). В профиле должны быть **Network Extensions → Packet Tunnel**. |
+| **Windows 10/11** | `EthicVPN-Setup-X.Y.Z.exe` | Запустите установщик, права администратора не нужны. |
 
 ## Как добавить подписку
 
-1. В Telegram-боте сервиса скопируйте ссылку подписки.
+1. Скопируйте ссылку подписки, которую вам прислал администратор.
 2. Откройте [cats1223.github.io/EthicVPN-app](https://cats1223.github.io/EthicVPN-app/) и нажмите **«Открыть EthicVPN»**.
 3. Приложение спросит **«Добавить подписку?»** — нажмите «Добавить». На iPhone разрешите вставку из буфера.
 
